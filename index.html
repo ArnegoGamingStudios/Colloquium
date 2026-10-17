@@ -1,263 +1,14 @@
-COLLOQUIUM - FULL SOURCE CODE
-==============================================================================
-Every code file from Colloquium.zip, in one place.
-The docs (Colloquium.txt) are a separate file - they are not code.
-The logo (icon.png) is a picture, so it is not inside this text file:
-keep icon.png next to index.html, spelled in lower case.
-
-==============================================================================
-FILE: index.html   (11583 bytes)
-==============================================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Colloquium</title>
-    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB3klEQVR4AYySS0iUURSAv+lB0QuSioigNlNBtQmiJ0z22LYqCaI2Ucq0a9WmVoGbaFctFCaQXkZk6zYq1Expoi4HFVeCKxHF9+s7/4w6utHhfuf1n3vuuXPPFtb86hfhm3RJfh0F/Q5pltVNFQVe+iFNO3fJcY4mLvFBcitcpIHzdFIDvDdX5SoXeGXgDM3c4ZfBYZmRaQm9zKz+mMCCMusesMBjjSryVu4xfFqe08ojvlDLJ/m4QpbPVPMWiCO2qp8tWuC4Rprfyv1yj7zyq0Qvber2Clq1e2VEtkvSwUn+cosB3SMCg8CUVMmedezT3y2lzRpxhWMUtebksJTa26U1L96OSiJmuGJ5hamoQtrgdQrKftkhm1sWiD+D5BwYd5ehsqez4TJ7W5LUpyxwU3lCpmVzywJFjpq7U+IZ4YDWhPhJudEyq0iGNuLc0ST7kDIeNK4TncSLhJ40HiMV4xSDpOuywJCqi7PKmLIWqrVuy+UyV8r6qvqCnJI4IAolc9CYij8vw4+kyH8/v7ZIEw9p5D4NrJLjAX94asZBiSd9k7IDbV5Y5B81tHAD2CvRcKREszEJYcdFSueawDv3kIxAeFKfgh6u8Z1aunlCh7pE2HX6dXSS4SeQNVcFLAEAAP//nJCgwAAAAAZJREFUAwBWIY+JSfSoxwAAAABJRU5ErkJggg==">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="app">
-        <!-- Channel Sidebar -->
-        <aside class="channel-sidebar">
-            <div class="server-header">
-                <h2><span class="brand-logo" aria-hidden="true"></span>Colloquium</h2>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="channel-category">
-                <span class="category-name">Conversations
-                    <button class="add-channel-btn" id="add-channel-btn" title="New Conversation">+</button>
-                    <button class="add-channel-btn" id="unlock-btn" title="Join Private by Code">🔒</button>
-                </span>
-                <div id="channel-list"></div>
-            </div>
-            <!-- User Panel -->
-            <div class="user-panel">
-                <div class="user-avatar">
-                    <div class="avatar-circle" id="user-avatar">?</div>
-                    <div class="status-indicator online" id="user-status"></div>
-                </div>
-                <div class="user-info">
-                    <span class="username" id="current-username">Guest</span>
-                    <span class="user-status" id="user-discriminator">#0001</span>
-                </div>
-                <div class="user-actions">
-                    <button class="icon-btn" id="settings-btn" title="Settings">&#9881;</button>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Chat Area -->
-        <main class="chat-area">
-            <div class="chat-header">
-                <div class="chat-header-left">
-                    <span class="header-channel-name" id="current-channel-name">general</span></span
-                    <span class="header-divider"></span>
-                    <span class="header-topic">General discussion for everyone</span>
-                </div>
-                <div class="chat-header-right">
-                    <button class="icon-btn" id="users-btn" title="All Users">&#128100;</button>
-                    <button class="icon-btn" id="pinned-btn" title="Pinned Messages">&#128204;</button>
-                    <button class="icon-btn" id="notifications-btn" title="Notifications">&#128276;</button>
-                    <button class="icon-btn" id="toggle-members" title="Member List">&#128101;</button>
-                </div>
-            </div>
-
-            <div class="chat-body">
-                <div class="messages-container" id="messages"></div>
-
-                <!-- Member List -->
-                <aside class="member-list" id="member-list">
-                    <div class="member-category">
-                        <span>Online -- <span id="online-count">0</span></span>
-                        <div id="members-online"></div>
-                    </div>
-                    <div class="member-category">
-                        <span>Offline -- <span id="offline-count">0</span></span>
-                        <div id="members-offline"></div>
-                    </div>
-                </aside>
-            </div>
-
-            <!-- Message Input -->
-            <div class="message-input-area">
-                <div class="message-input-container">
-                    <button class="attach-btn" id="attach-btn" title="Send a photo from your files">&#128206;</button>
-                    <input type="file" id="photo-file" accept="image/*" class="hidden">
-                    <input type="text" id="message-input" placeholder="Message #general" autocomplete="off">
-                    <button class="emoji-btn" id="emoji-btn" title="Emoji">&#128578;</button>
-                    <div id="emoji-picker" class="emoji-picker hidden"></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Auth Modal (Login / Signup) — Reference Style -->
-    <div id="auth-modal" class="modal-overlay">
-        <div class="modal">
-
-            <!-- Login View -->
-            <div id="view-login">
-                <h2>Welcome Back!</h2>
-                <p>We're so excited to see you again.</p>
-                <input type="text" id="login-user" placeholder="Username" autocomplete="off">
-                <input type="password" id="login-pass" placeholder="Password">
-                <div class="auth-msg" id="login-msg"></div>
-                <button id="login-submit">Log In</button>
-                <p class="auth-switch">Need an account? <span id="to-signup">Sign Up</span></p>
-            </div>
-
-            <!-- Signup View -->
-            <div id="view-signup" class="hidden">
-                <h2>Create Account</h2>
-                <p>Join the <span class="brand-logo" aria-hidden="true"></span>Colloquium community</p>
-                <input type="text" id="signup-user" placeholder="Username" maxlength="20" autocomplete="off">
-                <input type="password" id="signup-pass" placeholder="Password">
-                <div class="auth-msg" id="signup-msg"></div>
-                <button id="signup-submit">Sign Up</button>
-                <p class="auth-switch">Already have an account? <span id="to-login">Log In</span></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Conversation Modal -->
-    <div id="newchannel-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <button class="auth-close" id="newchannel-close">&times;</button>
-            <h2>New Conversation</h2>
-            <p>Create a public or private chat</p>
-            <input type="text" id="nc-name" placeholder="Conversation name">
-            <input type="text" id="nc-topic" placeholder="Topic (optional)">
-            <label class="nc-toggle"><input type="checkbox" id="nc-private"> Private (requires password to join)</label>
-            <input type="password" id="nc-password" placeholder="Set password" class="hidden">
-            <div class="auth-msg" id="nc-msg"></div>
-            <button id="newchannel-submit">Create</button>
-        </div>
-    </div>
-
-    <!-- Secret Code Unlock Modal -->
-    <div id="unlock-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <button class="auth-close" id="unlock-close">&times;</button>
-            <h2>Enter Secret Code</h2>
-            <p>Enter the conversation name and password</p>
-            <input type="text" id="unlock-name" placeholder="Conversation name">
-            <input type="password" id="unlock-password" placeholder="Password">
-            <div class="auth-msg" id="unlock-msg"></div>
-            <button id="unlock-submit">Unlock</button>
-        </div>
-    </div>
-
-    <!-- Pinned Messages Panel -->
-    <div id="pinned-panel" class="side-panel hidden">
-        <div class="side-panel-header">
-            <h3>Pinned Messages</h3>
-            <button class="icon-btn" id="pinned-close">&times;</button>
-        </div>
-        <div class="side-panel-content" id="pinned-list"></div>
-    </div>
-
-    <!-- Notifications Panel -->
-    <div id="notifications-panel" class="side-panel hidden">
-        <div class="side-panel-header">
-            <h3>Notifications</h3>
-            <button class="icon-btn" id="notifications-close">&times;</button>
-        </div>
-        <div class="side-panel-content" id="notifications-list"></div>
-    </div>
-
-    <!-- All Users Panel -->
-    <div id="users-panel" class="side-panel hidden">
-        <div class="side-panel-header">
-            <h3>All Users</h3>
-            <button class="icon-btn" id="users-close">&times;</button>
-        </div>
-        <div class="side-panel-content" id="all-users-list"></div>
-    </div>
-
-    <!-- Settings Panel -->
-    <div id="settings-panel" class="side-panel hidden">
-        <div class="side-panel-header">
-            <h3>Settings</h3>
-            <button class="icon-btn" id="settings-close">&times;</button>
-        </div>
-        <div class="side-panel-content">
-            <div class="settings-pfp">
-                <div class="pfp-preview" id="pfp-preview">?</div>
-                <input type="file" id="pfp-file" accept="image/png,image/*">
-                <span class="auth-msg" id="pfp-msg"></span>
-                <div class="pfp-actions">
-                    <button class="save-btn" id="pfp-save">Save</button>
-                    <button class="logout-btn" id="pfp-clear">Remove</button>
-                </div>
-            </div>
-            <div class="settings-item">
-                <label>Username</label>
-                <span id="settings-username">-</span>
-            </div>
-            <div class="settings-item">
-                <label>Status</label>
-                <span id="settings-status">Online</span>
-            </div>
-            <div class="settings-item">
-                <label>Theme</label>
-                <span>Red & Blue</span>
-            </div>
-            <hr class="settings-divider">
-            <div class="settings-delete-section">
-                <h4>Delete Account</h4>
-                <p>Permanently removes your account from <span class="brand-logo" aria-hidden="true"></span>Colloquium.</p>
-                <input type="text" id="delete-confirm" placeholder="Type your username to confirm">
-                <span class="auth-msg" id="delete-msg"></span>
-                <button id="delete-submit" class="logout-btn danger">Delete My Account</button>
-            </div>
-            <button id="logout-btn" class="logout-btn">Log Out</button>
-            <button class="setting-item" id="open-customize-ui">Customize the UI<span class="arrow">›</span></button>
-            <div class="setting-panel hidden" id="panel-customize-ui">
-                <h2>Customize the UI</h2>
-                <div class="settings-item">
-                    <label>Accent Red</label>
-                    <input type="color" id="ui-accent-red" value="#e94560">
-                </div>
-                <div class="settings-item">
-                    <label>Accent Blue</label>
-                    <input type="color" id="ui-accent-blue" value="#4e73df">
-                </div>
-                <div class="settings-item">
-                    <label>Background</label>
-                    <input type="color" id="ui-bg-dark" value="#0d0d1a">
-                </div>
-                <div class="settings-item">
-                    <label>Sidebar</label>
-                    <input type="color" id="ui-bg-sidebar" value="#111128">
-                </div>
-                <div class="settings-item">
-                    <label>Sidebar Position</label>
-                    <select id="ui-sidebar-pos">
-                        <option value="left">Left</option>
-                        <option value="right">Right</option>
-                    </select>
-                </div>
-                <span class="auth-msg" id="ui-msg"></span>
-                <div class="ui-actions">
-                    <button class="save-btn" id="ui-save">Save UI</button>
-                    <button class="logout-btn" id="ui-reset">Reset UI</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
-</body>
-</html>
-
-==============================================================================
-FILE: styles.css   (23831 bytes)
-==============================================================================
+    <style>
 /* ============================================
    Colloquium - Chat App
    Red & Blue Theme
@@ -299,7 +50,7 @@ FILE: styles.css   (23831 bytes)
        Linux, where "icon.png" and "Icon.png" are different files, while Windows
        would happily load either one. app.js falls back to an inlined copy of the
        same picture if icon.png is ever missing. */
-    --brand-logo: url("icon.png");
+    --brand-logo: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB3klEQVR4AYySS0iUURSAv+lB0QuSioigNlNBtQmiJ0z22LYqCaI2Ucq0a9WmVoGbaFctFCaQXkZk6zYq1Expoi4HFVeCKxHF9+s7/4w6utHhfuf1n3vuuXPPFtb86hfhm3RJfh0F/Q5pltVNFQVe+iFNO3fJcY4mLvFBcitcpIHzdFIDvDdX5SoXeGXgDM3c4ZfBYZmRaQm9zKz+mMCCMusesMBjjSryVu4xfFqe08ojvlDLJ/m4QpbPVPMWiCO2qp8tWuC4Rprfyv1yj7zyq0Qvber2Clq1e2VEtkvSwUn+cosB3SMCg8CUVMmedezT3y2lzRpxhWMUtebksJTa26U1L96OSiJmuGJ5hamoQtrgdQrKftkhm1sWiD+D5BwYd5ehsqez4TJ7W5LUpyxwU3lCpmVzywJFjpq7U+IZ4YDWhPhJudEyq0iGNuLc0ST7kDIeNK4TncSLhJ40HiMV4xSDpOuywJCqi7PKmLIWqrVuy+UyV8r6qvqCnJI4IAolc9CYij8vw4+kyH8/v7ZIEw9p5D4NrJLjAX94asZBiSd9k7IDbV5Y5B81tHAD2CvRcKREszEJYcdFSueawDv3kIxAeFKfgh6u8Z1aunlCh7pE2HX6dXSS4SeQNVcFLAEAAP//nJCgwAAAAAZJREFUAwBWIY+JSfSoxwAAAABJRU5ErkJggg==");
 }
 
 /* The logo is sized in em, so it always matches the text it sits beside: 1em tall,
@@ -1068,9 +819,240 @@ body.sidebar-right .channel-sidebar { border-right: none; border-left: 1px solid
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 .side-panel { animation: slideIn 0.25s ease; }
 
-==============================================================================
-FILE: app.js   (76237 bytes)
-==============================================================================
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Channel Sidebar -->
+        <aside class="channel-sidebar">
+            <div class="server-header">
+                <h2><span class="brand-logo" aria-hidden="true"></span>Colloquium</h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="channel-category">
+                <span class="category-name">Conversations
+                    <button class="add-channel-btn" id="add-channel-btn" title="New Conversation">+</button>
+                    <button class="add-channel-btn" id="unlock-btn" title="Join Private by Code">🔒</button>
+                </span>
+                <div id="channel-list"></div>
+            </div>
+            <!-- User Panel -->
+            <div class="user-panel">
+                <div class="user-avatar">
+                    <div class="avatar-circle" id="user-avatar">?</div>
+                    <div class="status-indicator online" id="user-status"></div>
+                </div>
+                <div class="user-info">
+                    <span class="username" id="current-username">Guest</span>
+                    <span class="user-status" id="user-discriminator">#0001</span>
+                </div>
+                <div class="user-actions">
+                    <button class="icon-btn" id="settings-btn" title="Settings">&#9881;</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <span class="header-channel-name" id="current-channel-name">general</span></span
+                    <span class="header-divider"></span>
+                    <span class="header-topic">General discussion for everyone</span>
+                </div>
+                <div class="chat-header-right">
+                    <button class="icon-btn" id="users-btn" title="All Users">&#128100;</button>
+                    <button class="icon-btn" id="pinned-btn" title="Pinned Messages">&#128204;</button>
+                    <button class="icon-btn" id="notifications-btn" title="Notifications">&#128276;</button>
+                    <button class="icon-btn" id="toggle-members" title="Member List">&#128101;</button>
+                </div>
+            </div>
+
+            <div class="chat-body">
+                <div class="messages-container" id="messages"></div>
+
+                <!-- Member List -->
+                <aside class="member-list" id="member-list">
+                    <div class="member-category">
+                        <span>Online -- <span id="online-count">0</span></span>
+                        <div id="members-online"></div>
+                    </div>
+                    <div class="member-category">
+                        <span>Offline -- <span id="offline-count">0</span></span>
+                        <div id="members-offline"></div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Message Input -->
+            <div class="message-input-area">
+                <div class="message-input-container">
+                    <button class="attach-btn" id="attach-btn" title="Send a photo from your files">&#128206;</button>
+                    <input type="file" id="photo-file" accept="image/*" class="hidden">
+                    <input type="text" id="message-input" placeholder="Message #general" autocomplete="off">
+                    <button class="emoji-btn" id="emoji-btn" title="Emoji">&#128578;</button>
+                    <div id="emoji-picker" class="emoji-picker hidden"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth Modal (Login / Signup) — Reference Style -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal">
+
+            <!-- Login View -->
+            <div id="view-login">
+                <h2>Welcome Back!</h2>
+                <p>We're so excited to see you again.</p>
+                <input type="text" id="login-user" placeholder="Username" autocomplete="off">
+                <input type="password" id="login-pass" placeholder="Password">
+                <div class="auth-msg" id="login-msg"></div>
+                <button id="login-submit">Log In</button>
+                <p class="auth-switch">Need an account? <span id="to-signup">Sign Up</span></p>
+            </div>
+
+            <!-- Signup View -->
+            <div id="view-signup" class="hidden">
+                <h2>Create Account</h2>
+                <p>Join the <span class="brand-logo" aria-hidden="true"></span>Colloquium community</p>
+                <input type="text" id="signup-user" placeholder="Username" maxlength="20" autocomplete="off">
+                <input type="password" id="signup-pass" placeholder="Password">
+                <div class="auth-msg" id="signup-msg"></div>
+                <button id="signup-submit">Sign Up</button>
+                <p class="auth-switch">Already have an account? <span id="to-login">Log In</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Conversation Modal -->
+    <div id="newchannel-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <button class="auth-close" id="newchannel-close">&times;</button>
+            <h2>New Conversation</h2>
+            <p>Create a public or private chat</p>
+            <input type="text" id="nc-name" placeholder="Conversation name">
+            <input type="text" id="nc-topic" placeholder="Topic (optional)">
+            <label class="nc-toggle"><input type="checkbox" id="nc-private"> Private (requires password to join)</label>
+            <input type="password" id="nc-password" placeholder="Set password" class="hidden">
+            <div class="auth-msg" id="nc-msg"></div>
+            <button id="newchannel-submit">Create</button>
+        </div>
+    </div>
+
+    <!-- Secret Code Unlock Modal -->
+    <div id="unlock-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <button class="auth-close" id="unlock-close">&times;</button>
+            <h2>Enter Secret Code</h2>
+            <p>Enter the conversation name and password</p>
+            <input type="text" id="unlock-name" placeholder="Conversation name">
+            <input type="password" id="unlock-password" placeholder="Password">
+            <div class="auth-msg" id="unlock-msg"></div>
+            <button id="unlock-submit">Unlock</button>
+        </div>
+    </div>
+
+    <!-- Pinned Messages Panel -->
+    <div id="pinned-panel" class="side-panel hidden">
+        <div class="side-panel-header">
+            <h3>Pinned Messages</h3>
+            <button class="icon-btn" id="pinned-close">&times;</button>
+        </div>
+        <div class="side-panel-content" id="pinned-list"></div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div id="notifications-panel" class="side-panel hidden">
+        <div class="side-panel-header">
+            <h3>Notifications</h3>
+            <button class="icon-btn" id="notifications-close">&times;</button>
+        </div>
+        <div class="side-panel-content" id="notifications-list"></div>
+    </div>
+
+    <!-- All Users Panel -->
+    <div id="users-panel" class="side-panel hidden">
+        <div class="side-panel-header">
+            <h3>All Users</h3>
+            <button class="icon-btn" id="users-close">&times;</button>
+        </div>
+        <div class="side-panel-content" id="all-users-list"></div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="side-panel hidden">
+        <div class="side-panel-header">
+            <h3>Settings</h3>
+            <button class="icon-btn" id="settings-close">&times;</button>
+        </div>
+        <div class="side-panel-content">
+            <div class="settings-pfp">
+                <div class="pfp-preview" id="pfp-preview">?</div>
+                <input type="file" id="pfp-file" accept="image/png,image/*">
+                <span class="auth-msg" id="pfp-msg"></span>
+                <div class="pfp-actions">
+                    <button class="save-btn" id="pfp-save">Save</button>
+                    <button class="logout-btn" id="pfp-clear">Remove</button>
+                </div>
+            </div>
+            <div class="settings-item">
+                <label>Username</label>
+                <span id="settings-username">-</span>
+            </div>
+            <div class="settings-item">
+                <label>Status</label>
+                <span id="settings-status">Online</span>
+            </div>
+            <div class="settings-item">
+                <label>Theme</label>
+                <span>Red & Blue</span>
+            </div>
+            <hr class="settings-divider">
+            <div class="settings-delete-section">
+                <h4>Delete Account</h4>
+                <p>Permanently removes your account from <span class="brand-logo" aria-hidden="true"></span>Colloquium.</p>
+                <input type="text" id="delete-confirm" placeholder="Type your username to confirm">
+                <span class="auth-msg" id="delete-msg"></span>
+                <button id="delete-submit" class="logout-btn danger">Delete My Account</button>
+            </div>
+            <button id="logout-btn" class="logout-btn">Log Out</button>
+            <button class="setting-item" id="open-customize-ui">Customize the UI<span class="arrow">›</span></button>
+            <div class="setting-panel hidden" id="panel-customize-ui">
+                <h2>Customize the UI</h2>
+                <div class="settings-item">
+                    <label>Accent Red</label>
+                    <input type="color" id="ui-accent-red" value="#e94560">
+                </div>
+                <div class="settings-item">
+                    <label>Accent Blue</label>
+                    <input type="color" id="ui-accent-blue" value="#4e73df">
+                </div>
+                <div class="settings-item">
+                    <label>Background</label>
+                    <input type="color" id="ui-bg-dark" value="#0d0d1a">
+                </div>
+                <div class="settings-item">
+                    <label>Sidebar</label>
+                    <input type="color" id="ui-bg-sidebar" value="#111128">
+                </div>
+                <div class="settings-item">
+                    <label>Sidebar Position</label>
+                    <select id="ui-sidebar-pos">
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+                <span class="auth-msg" id="ui-msg"></span>
+                <div class="ui-actions">
+                    <button class="save-btn" id="ui-save">Save UI</button>
+                    <button class="logout-btn" id="ui-reset">Reset UI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
 /**
  * Colloquium - Chat App
  * Backend: npoint.io (direct fetch, POST updates)
@@ -1637,7 +1619,7 @@ var BRAND_LOGO_FALLBACK = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAA
         var icon = document.querySelector('link[rel="icon"]');
         if (icon) icon.href = BRAND_LOGO_FALLBACK;
     };
-    probe.src = 'icon.png';
+    probe.src = BRAND_LOGO_FALLBACK;
 })();
 
 // Message body: optional photo plus text with clickable links
@@ -2606,3 +2588,6 @@ function init() {
 
 init();
 
+    </script>
+</body>
+</html>
