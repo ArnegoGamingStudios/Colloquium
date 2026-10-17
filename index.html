@@ -2590,4 +2590,2348 @@ init();
 
     </script>
 </body>
+    /* ============================================
+   Colloquium - Chat App
+   Red & Blue Theme
+   ============================================ */
+
+:root {
+    --bg-darkest: #0d0d1a;
+    --bg-darker: #111128;
+    --bg-dark: #1a1040;
+    --bg-medium: #1e1445;
+    --bg-light: #251a4a;
+    --bg-lighter: #2d2155;
+    --bg-hover: #342860;
+    --bg-active: #3d2f6e;
+
+    --accent-red: #e94560;
+    --accent-red-bright: #ff5c7a;
+    --accent-red-dark: #b81e42;
+    --accent-red-deep: #8a1535;
+    --accent-blue: #4e73df;
+    /* text colour for anything painted on an accent-coloured fill (recomputed by app.js) */
+    --accent-on: #ffffff;
+    --accent-blue-on: #ffffff;
+    --text-primary: #ffffff;
+    --text-secondary: #b5bac1;
+    --text-muted: #7a7e8e;
+
+    --border-color: rgba(233, 69, 96, 0.15);
+    --divider-color: rgba(233, 69, 96, 0.08);
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+
+    --font-main: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+
+    /* Colloquium logo. It lives in icon.png next to index.html, so GitHub serves it
+       with the rest of the site. Keep the file name lower-case: GitHub Pages runs on
+       Linux, where "icon.png" and "Icon.png" are different files, while Windows
+       would happily load either one. app.js falls back to an inlined copy of the
+       same picture if icon.png is ever missing. */
+    --brand-logo: url("icon.png");
+}
+
+/* The logo is sized in em, so it always matches the text it sits beside: 1em tall,
+   as tall as the text next to it, and as wide as the text it sits to the left of. */
+.brand-logo {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.25em;
+    vertical-align: -0.15em;
+    background-image: var(--brand-logo);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Buttons: keep the theme font everywhere; individual classes style the rest */
+button {
+    font-family: var(--font-main);
+    color: var(--text-primary);
+    outline: none;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--bg-darkest);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent-red-dark); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-red); }
+
+/* ============ Layout ============ */
+#app { display: flex; height: 100vh; width: 100vw; }
+
+/* ============ Channel Sidebar ============ */
+.channel-sidebar {
+    width: 260px;
+    background: var(--bg-darker);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-color);
+}
+
+.server-header {
+    height: 52px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.server-header:hover { background: var(--bg-hover); }
+
+.channel-category { padding: 16px 8px 4px; }
+
+.category-name {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-red);
+    letter-spacing: 0.5px;
+    padding: 0 8px;
+    cursor: pointer;
+}
+.category-name:hover { color: var(--accent-red-bright); }
+
+/* + / lock buttons next to the "Conversations" label */
+.add-channel-btn {
+    background: rgba(233, 69, 96, 0.15);
+    border: 1px solid var(--border-color);
+    color: var(--accent-red);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    width: 22px;
+    height: 22px;
+    margin-left: 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    vertical-align: middle;
+    transition: all 0.15s;
+}
+.add-channel-btn:hover {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: var(--accent-on);
+}
+
+.channel {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    margin: 2px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 15px;
+    transition: all 0.15s;
+    position: relative;
+}
+.channel:hover { background: rgba(233, 69, 96, 0.1); color: var(--text-secondary); }
+.channel.active { background: rgba(233, 69, 96, 0.15); color: var(--text-primary); }
+.channel.active::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    width: 3px;
+    height: 24px;
+    background: var(--accent-red);
+    border-radius: 0 3px 3px 0;
+}
+
+.channel-hash { margin-right: 8px; font-size: 18px; font-weight: 600; color: var(--accent-red); }
+.channel-delete { display: none; margin-left: auto; color: var(--accent-red); font-size: 14px; font-weight: 700; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.channel-delete:hover { background: rgba(233,69,96,0.2); }
+.is-admin .channel-delete { display: inline-block; }
+.msg-delete { display: none; background: none; border: none; color: var(--accent-red); cursor: pointer; font-size: 12px; font-weight: 700; padding: 2px 6px; border-radius: 4px; opacity: .6; }
+.msg-delete:hover { opacity: 1; background: rgba(233,69,96,.15); }
+.is-admin .msg-delete { display: inline-block; }
+.is-admin .msg-delete.own { background: none; }
+
+/* ============ User Panel ============ */
+.user-panel {
+    margin-top: auto;
+    background: rgba(233, 69, 96, 0.08);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.user-avatar { position: relative; width: 36px; height: 36px; flex-shrink: 0; }
+
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-red), var(--accent-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    color: var(--accent-on);
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-darker);
+}
+.status-indicator.online { background: #3ba55c; }
+.status-indicator.idle { background: #faa81a; }
+.status-indicator.offline { background: #747f8d; }
+
+.user-info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.username { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-status { font-size: 12px; color: var(--accent-red); }
+
+.user-actions { display: flex; gap: 2px; }
+
+.icon-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    transition: all 0.15s;
+}
+.icon-btn:hover { background: rgba(233, 69, 96, 0.2); color: var(--accent-red-bright); }
+.icon-btn.active { color: var(--accent-red); background: rgba(233, 69, 96, 0.15); }
+/* unread count bubble on the notifications bell */
+.icon-btn.has-unread::after {
+    content: attr(data-count);
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 3px;
+    border-radius: 7px;
+    background: var(--accent-blue);
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 14px;
+    text-align: center;
+}
+
+/* ============ Chat Area ============ */
+.chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); min-width: 0; }
+
+.chat-header {
+    height: 52px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.chat-header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.header-hash { font-size: 22px; font-weight: 700; color: var(--accent-red); }
+.header-channel-name { font-weight: 700; font-size: 16px; }
+.header-divider { width: 1px; height: 22px; background: var(--accent-red-dark); margin: 0 4px; opacity: 0.5; }
+.header-topic { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-header-right { display: flex; gap: 4px; }
+
+.chat-body { flex: 1; display: flex; overflow: hidden; }
+
+/* ============ Messages ============ */
+.messages-container { flex: 1; overflow-y: auto; padding: 16px 0; display: flex; flex-direction: column; }
+
+.message-group {
+    padding: 8px 16px;
+    display: flex;
+    gap: 14px;
+    transition: background 0.1s;
+    position: relative;
+}
+.message-group:hover { background: rgba(233, 69, 96, 0.03); }
+
+.message-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.message-content { flex: 1; min-width: 0; }
+.message-header { display: flex; align-items: baseline; gap: 10px; }
+.message-author { font-weight: 700; font-size: 15px; cursor: pointer; }
+.message-author:hover { text-decoration: underline; }
+.message-timestamp { font-size: 11px; color: var(--text-muted); }
+.message-text { font-size: 15px; color: var(--text-secondary); line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; }
+
+.message-text .mention {
+    background: rgba(233, 69, 96, 0.25);
+    color: var(--accent-red-bright);
+    padding: 0 4px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.system-message {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-red);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.date-divider { display: flex; align-items: center; padding: 16px 16px 8px; gap: 12px; }
+.date-divider::before, .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--divider-color); }
+.date-divider span { font-size: 11px; font-weight: 700; color: var(--accent-red); text-transform: uppercase; }
+
+/* ============ Member List ============ */
+.member-list {
+    width: 220px;
+    background: var(--bg-darker);
+    padding: 16px 8px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border-color);
+}
+
+.member-category { margin-bottom: 16px; }
+.member-category > span {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-red);
+    padding: 0 8px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.member { display: flex; align-items: center; padding: 6px 8px; border-radius: var(--radius-sm); cursor: pointer; gap: 8px; transition: background 0.15s; }
+.member:hover { background: rgba(233, 69, 96, 0.1); }
+
+.member-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+.member .status-indicator { border-color: var(--bg-darker); }
+.member-name { font-size: 14px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member.offline .member-name { color: var(--text-muted); opacity: 0.5; }
+.member.offline .member-avatar { opacity: 0.35; }
+
+/* ============ Message Input ============ */
+.message-input-area { padding: 0 16px 24px; flex-shrink: 0; }
+
+.message-input-container {
+    position: relative;
+    background: var(--bg-lighter);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    height: 46px;
+    gap: 8px;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.2s;
+}
+.message-input-container:focus-within { border-color: var(--accent-red); }
+
+.attach-btn, .emoji-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    padding: 4px;
+    transition: color 0.15s;
+}
+.attach-btn:hover, .emoji-btn:hover { color: var(--accent-red); }
+
+#message-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-family: var(--font-main);
+    height: 100%;
+}
+#message-input::placeholder { color: var(--text-muted); }
+
+/* ============ Shared photos, links & pins ============ */
+.message-image-link { display: inline-block; margin-top: 6px; }
+.message-image {
+    display: block;
+    max-width: 320px;
+    max-height: 320px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+.message-image-name { display: block; margin-top: 4px; font-size: 11px; color: var(--text-muted); }
+.message-link { color: var(--accent-blue); word-break: break-all; }
+.message-link:hover { text-decoration: underline; }
+
+/* Pin / unpin button — hidden until you hover the message (or the message is pinned) */
+.msg-pin {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.message-group:hover .msg-pin, .msg-pin:focus { opacity: 1; }
+.msg-pin:hover { background: rgba(233, 69, 96, 0.15); color: var(--accent-red-bright); }
+.msg-pin.active { opacity: 1; color: var(--accent-red); }
+/* inside the pinned side panel the button is always usable */
+.side-panel .msg-pin { opacity: 1; }
+
+.message-group.pinned { background: rgba(233, 69, 96, 0.07); box-shadow: inset 3px 0 0 var(--accent-red); }
+.pinned-flag { font-size: 11px; font-weight: 700; color: var(--accent-red); }
+
+/* ============ Emoji picker ============ */
+.emoji-picker {
+    position: absolute;
+    right: 8px;
+    bottom: calc(100% + 10px);
+    width: 270px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--accent-red-dark);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 600;
+}
+.emoji-picker button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 0;
+    border-radius: var(--radius-sm);
+    transition: background 0.1s;
+}
+.emoji-picker button:hover { background: rgba(233, 69, 96, 0.25); }
+
+/* ============ Notifications panel ============ */
+.notif-empty { color: var(--text-muted); text-align: center; padding: 20px 0; font-size: 13px; }
+.notif-event {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: rgba(233, 69, 96, 0.06);
+    border-left: 3px solid var(--accent-red);
+    border-radius: var(--radius-sm);
+}
+.notif-event.mention { border-left-color: var(--accent-blue); background: rgba(78, 115, 223, 0.12); }
+.notif-event .notif-text { font-size: 13px; color: var(--text-secondary); word-wrap: break-word; }
+.notif-event .notif-time { font-size: 11px; color: var(--text-muted); }
+
+/* ============ Auth Modal (Reference Style) ============ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+}
+.modal-overlay.hidden { display: none; }
+
+.modal {
+    background: var(--bg-light);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    width: 420px;
+    text-align: center;
+    border: 1px solid var(--accent-red-dark);
+    box-shadow: 0 0 40px rgba(233, 69, 96, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.modal h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent-red), var(--accent-red-bright));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.modal p { color: var(--text-muted); margin-bottom: 20px; font-size: 14px; }
+
+.modal input {
+    width: 100%;
+    padding: 14px;
+    background: #0a1c3d;
+    border: 1px solid #2b4479;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+.modal input:focus { border-color: var(--accent-red); }
+
+.auth-msg {
+    font-size: 13px;
+    min-height: 20px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.auth-msg.ok { color: #6adea6; }
+.auth-msg.err { color: #ff6b6b; }
+
+.modal button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(180deg, var(--accent-red), var(--accent-red-dark));
+    border: none;
+    border-radius: 10px;
+    color: var(--accent-on);
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+}
+.modal button:hover { box-shadow: 0 10px 30px rgba(233, 69, 96, 0.5); transform: translateY(-2px); }
+.modal button:active { transform: scale(0.98); }
+
+/* Close (x) button inside modals — must out-rank the generic .modal button rule */
+.modal button.auth-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: auto;
+    padding: 4px 8px;
+    margin: 0;
+    background: none;
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--text-muted);
+}
+.modal button.auth-close:hover {
+    background: rgba(233, 69, 96, 0.2);
+    color: var(--accent-red-bright);
+    box-shadow: none;
+    transform: none;
+}
+.modal button.auth-close:active { transform: none; }
+
+.auth-switch { font-size: 13px; color: var(--text-muted); margin-top: 8px; margin-bottom: 0; }
+.auth-switch span { color: var(--accent-red); cursor: pointer; font-weight: 600; }
+.auth-switch span:hover { text-decoration: underline; }
+
+.hidden { display: none !important; }
+
+/* ============ Side Panels ============ */
+.side-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 360px;
+    background: var(--bg-darker);
+    border-left: 1px solid var(--border-color);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.25s ease;
+}
+
+.side-panel-header {
+    height: 52px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+.side-panel-header h3 { font-size: 16px; font-weight: 700; color: var(--accent-red); }
+
+.side-panel-content { flex: 1; overflow-y: auto; padding: 16px; }
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--divider-color);
+}
+.settings-item label { color: var(--text-muted); font-size: 13px; }
+.settings-item span { color: var(--text-primary); font-weight: 600; }
+
+.settings-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 16px 0;
+}
+
+.settings-delete-section {
+    margin-bottom: 12px;
+}
+.settings-delete-section h4 {
+    color: var(--accent-red);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.settings-delete-section p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+.settings-delete-section input {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 8px;
+}
+.settings-delete-section input:focus { border-color: var(--accent-red); }
+
+/* Row-style button (e.g. "Customize the UI") */
+button.setting-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--divider-color);
+    color: var(--text-primary);
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+button.setting-item:hover { color: var(--accent-red); }
+button.setting-item .arrow { color: var(--text-muted); font-size: 18px; }
+button.setting-item:hover .arrow { color: var(--accent-red); }
+
+/* Primary "Save" action (blue, so it reads different from the red/danger ones) */
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-blue);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--accent-blue-on);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.save-btn:hover { background: #5f85ef; box-shadow: 0 0 16px rgba(78, 115, 223, 0.4); }
+
+.logout-btn.danger {
+    background: var(--accent-red-dark);
+}
+.logout-btn.danger:hover { background: var(--accent-red); box-shadow: 0 0 16px rgba(233, 69, 96, 0.4); }
+
+/* sidebar position variants */
+body.sidebar-right #app { flex-direction: row-reverse; }
+body.sidebar-right .channel-sidebar { border-right: none; border-left: 1px solid var(--border-color); }
+
+/* customize ui inputs */
+.settings-item input[type="color"],
+.settings-item select {
+    width: 120px;
+    height: 32px;
+    padding: 2px 6px;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.nc-toggle {
+    display: block;
+    margin: 10px 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+.nc-toggle input { margin-right: 6px; }
+
+/* pfp uploader */
+.settings-pfp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.pfp-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--bg-darker);
+    border: 2px solid var(--accent-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+.pfp-actions { display: flex; gap: 8px; width: 100%; }
+.pfp-actions button { flex: 1; }
+
+/* Save UI / Reset UI sit side by side under the colour pickers */
+.ui-actions { display: flex; gap: 8px; width: 100%; }
+.ui-actions button { flex: 1; width: auto; margin-top: 0; }
+
+.logout-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-red-dark);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--accent-on);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 24px;
+}
+.logout-btn:hover { background: var(--accent-red); box-shadow: 0 0 16px rgba(233, 69, 96, 0.4); }
+
+/* ============ Responsive ============ */
+@media (max-width: 900px) {
+    .member-list { display: none; }
+    .member-list.visible { display: block; position: absolute; right: 0; top: 52px; bottom: 0; z-index: 10; }
+    .side-panel { width: 100%; }
+}
+
+@media (max-width: 700px) {
+    .channel-sidebar { width: 200px; }
+    .server-list { width: 52px; }
+    .server-icon { width: 36px; height: 36px; }
+    .modal { width: 90%; padding: 24px; }
+}
+
+/* ============ Animations ============ */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.message-group { animation: fadeIn 0.2s ease; }
+
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.side-panel { animation: slideIn 0.25s ease; }
+/**
+ * Colloquium - Chat App
+ * Backend: npoint.io (direct fetch, POST updates)
+ * Login/Signup checks bin for existing usernames
+ */
+
+var BIN = 'https://api.npoint.io/f6fb74ceb0da85de8dfb';
+var POLL_INTERVAL = 5000;
+
+// ============ State ============
+var state = {
+    currentUser: null,
+    currentChannel: 'general',
+    channels: {},
+    users: {},
+    messages: [],
+    lastFetch: null,
+    // photo sharing in public conversations is unlocked for this session with PHOTO_CODE
+    photoUnlocked: false,
+    // notifications shown in the bell panel instead of being posted into the chat
+    notifications: [],
+    notifMuted: false,
+    notifUnread: 0,
+    knownMessageIds: {},
+    unlocked: {}
+};
+
+// Secret code required to send photos into a public conversation
+var PHOTO_CODE = '2102010';
+
+// ============ DOM Elements ============
+var messagesContainer = document.getElementById('messages');
+var messageInput = document.getElementById('message-input');
+var currentChannelName = document.getElementById('current-channel-name');
+var usersBtn = document.getElementById('users-btn');
+var usersPanel = document.getElementById('users-panel');
+var usersClose = document.getElementById('users-close');
+var allUsersList = document.getElementById('all-users-list');
+var currentUsername = document.getElementById('current-username');
+var userAvatar = document.getElementById('user-avatar');
+var userStatus = document.getElementById('user-status');
+var userDiscriminator = document.getElementById('user-discriminator');
+var memberList = document.getElementById('member-list');
+var membersOnline = document.getElementById('members-online');
+var membersOffline = document.getElementById('members-offline');
+var onlineCount = document.getElementById('online-count');
+var offlineCount = document.getElementById('offline-count');
+
+// Auth elements
+var authModal = document.getElementById('auth-modal');
+var viewLogin = document.getElementById('view-login');
+var viewSignup = document.getElementById('view-signup');
+var loginUser = document.getElementById('login-user');
+var loginPass = document.getElementById('login-pass');
+var loginMsg = document.getElementById('login-msg');
+var signupUser = document.getElementById('signup-user');
+var signupPass = document.getElementById('signup-pass');
+var signupMsg = document.getElementById('signup-msg');
+var loginSubmit = document.getElementById('login-submit');
+var signupSubmit = document.getElementById('signup-submit');
+var authClose = document.getElementById('auth-close');
+var toSignup = document.getElementById('to-signup');
+var toLogin = document.getElementById('to-login');
+
+// Button elements
+var settingsBtn = document.getElementById('settings-btn');
+var pinnedBtn = document.getElementById('pinned-btn');
+var notificationsBtn = document.getElementById('notifications-btn');
+var toggleMembersBtn = document.getElementById('toggle-members');
+var attachBtn = document.getElementById('attach-btn');
+var photoFile = document.getElementById('photo-file');
+var emojiBtn = document.getElementById('emoji-btn');
+var emojiPicker = document.getElementById('emoji-picker');
+var pinnedPanel = document.getElementById('pinned-panel');
+var pinnedList = document.getElementById('pinned-list');
+var pinnedClose = document.getElementById('pinned-close');
+var notificationsPanel = document.getElementById('notifications-panel');
+var notificationsList = document.getElementById('notifications-list');
+var notificationsClose = document.getElementById('notifications-close');
+var settingsPanel = document.getElementById('settings-panel');
+var settingsClose = document.getElementById('settings-close');
+var logoutBtn = document.getElementById('logout-btn');
+var settingsUsername = document.getElementById('settings-username');
+var settingsStatus = document.getElementById('settings-status');
+var deleteConfirm = document.getElementById('delete-confirm');
+var deleteMsg = document.getElementById('delete-msg');
+var deleteSubmit = document.getElementById('delete-submit');
+var pfpFile = document.getElementById('pfp-file');
+var pfpPreview = document.getElementById('pfp-preview');
+var pfpMsg = document.getElementById('pfp-msg');
+var pfpSave = document.getElementById('pfp-save');
+var pfpClear = document.getElementById('pfp-clear');
+var openCustomizeUi = document.getElementById('open-customize-ui');
+var panelCustomizeUi = document.getElementById('panel-customize-ui');
+var uiAccentRed = document.getElementById('ui-accent-red');
+var uiAccentBlue = document.getElementById('ui-accent-blue');
+var uiBgDark = document.getElementById('ui-bg-dark');
+var uiBgSidebar = document.getElementById('ui-bg-sidebar');
+var uiSidebarPos = document.getElementById('ui-sidebar-pos');
+var uiSave = document.getElementById('ui-save');
+var uiReset = document.getElementById('ui-reset');
+var uiMsg = document.getElementById('ui-msg');
+
+// ============ API Functions ============
+
+function fetchData(cb) {
+    fetch(BIN)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (!data) data = {};
+            if (!data.channels) data.channels = {};
+            if (!data.users) data.users = {};
+            if (!data.messages) data.messages = [];
+            cb(null, data);
+        })
+        .catch(function (e) { cb(e, null); });
+}
+
+// The whole bin is ONE json document, so every save has to send all of it back.
+// Posting our local copy is what used to erase accounts: a client whose 5-second
+// poll had been throttled still held a user list from before somebody else signed
+// up, and its next message or pin overwrote them. So every write now re-reads the
+// bin and changes ONLY the field it actually means to change.
+function writeDoc(mutate, cb) {
+    fetchData(function (err, data) {
+        if (err || !data) { if (cb) cb(err || new Error('could not read the server')); return; }
+        try { mutate(data); } catch (e) { if (cb) cb(e); return; }
+        data.lastUpdated = new Date().toISOString();
+        fetch(BIN, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(function (r) {
+                if (!r.ok) throw new Error('save failed');
+                return r.json();
+            })
+            .then(function () {
+                // adopt what the server holds now so the UI matches it
+                state.channels = data.channels || state.channels;
+                state.users = data.users || state.users;
+                state.messages = data.messages || state.messages;
+                state.lastFetch = data.lastUpdated;
+                // keep the logged-in user pointing at the record the server holds
+                if (state.currentUser && state.users[state.currentUser.username]) {
+                    state.currentUser = state.users[state.currentUser.username];
+                }
+                // our own writes must never show up as notifications
+                state.messages.forEach(function (m) { state.knownMessageIds[m.id] = true; });
+                if (cb) cb(null);
+            })
+            .catch(function (e) { if (cb) cb(e); });
+    });
+}
+
+// Small helpers so callers describe the CHANGE, not the whole document.
+function updateUserFields(username, fields, cb) {
+    writeDoc(function (d) {
+        if (!d.users) d.users = {};
+        if (!d.users[username]) d.users[username] = {};
+        Object.keys(fields).forEach(function (k) { d.users[username][k] = fields[k]; });
+    }, cb);
+}
+function appendMessage(msg, cb) {
+    writeDoc(function (d) {
+        if (!d.messages) d.messages = [];
+        d.messages.push(msg);
+    }, cb);
+}
+function removeMessageById(msgId, cb) {
+    writeDoc(function (d) {
+        if (!d.messages) return;
+        d.messages = d.messages.filter(function (m) { return m.id !== msgId; });
+    }, cb);
+}
+function setMessagePinned(msgId, pinned, cb) {
+    writeDoc(function (d) {
+        (d.messages || []).forEach(function (m) { if (m.id === msgId) m.pinned = pinned; });
+    }, cb);
+}
+
+// ============ Auth Functions ============
+
+function hashPass(s) {
+    var str = 'colloquium' + s + '2026';
+    var h = 5381;
+    for (var i = 0; i < str.length; i++) {
+        h = ((h << 5) + h) + str.charCodeAt(i) | 0;
+    }
+    return (h >>> 0).toString(36);
+}
+
+function isAdmin() { return !!(state.currentUser && state.currentUser.username === 'SeanCraft'); }
+
+function applyUserAvatar(user) {
+    if (!userAvatar) return;
+    if (user && user.avatar) {
+        userAvatar.style.backgroundImage = 'url(' + user.avatar + ')';
+        userAvatar.style.backgroundSize = 'cover';
+        userAvatar.style.backgroundPosition = 'center';
+        userAvatar.textContent = '';
+    } else {
+        userAvatar.style.backgroundImage = '';
+        userAvatar.textContent = (user ? user.username.charAt(0).toUpperCase() : '?');
+    }
+}
+
+var UI_DEFAULTS = { accentRed: '#e94560', accentBlue: '#4e73df', bgDark: '#0d0d1a', bgSidebar: '#111128', sidebarPos: 'left' };
+
+// ============ UI colour helpers ============
+function uiHexToRgb(hex) {
+    hex = String(hex || '').trim().replace('#', '');
+    if (hex.length === 3) hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+    return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
+}
+function uiRgbToHex(r, g, b) {
+    function part(n) { n = Math.max(0, Math.min(255, Math.round(n))); return (n < 16 ? '0' : '') + n.toString(16); }
+    return '#' + part(r) + part(g) + part(b);
+}
+// amount > 0 lightens toward white, amount < 0 darkens toward black
+function uiShade(hex, amount) {
+    var c = uiHexToRgb(hex);
+    if (!c) return hex;
+    var target = amount < 0 ? 0 : 255, k = Math.abs(amount);
+    return uiRgbToHex(c[0] + (target - c[0]) * k, c[1] + (target - c[1]) * k, c[2] + (target - c[2]) * k);
+}
+// Text colour that stays readable on a fill of this colour, whatever accent the user picks
+function uiTextOn(hex) {
+    var c = uiHexToRgb(hex);
+    if (!c) return '#ffffff';
+    var lum = (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
+    return lum > 0.6 ? '#141428' : '#ffffff';
+}
+
+// The app's dark surfaces come from a ramp of --bg-* shades, and those used to be
+// hard-coded in the stylesheet. Picking a Background colour therefore changed
+// nothing you could actually see: it only painted <body>, which the sidebar and the
+// chat area cover completely. These are the stylesheet's original values, so the
+// ramp below is byte-identical to the stock theme until a colour is picked.
+//
+// The ramp is split in two so the background and the sidebar are separate pieces:
+// the chat area / panels follow "Background", while the left sidebar, the member
+// list and the side panels (settings, pinned, notifications) follow "Sidebar".
+// Changing one never repaints the other.
+var BG_RAMP_MAIN = [
+    ['--bg-darkest', '#0d0d1a'],
+    ['--bg-dark',    '#1a1040'],
+    ['--bg-medium',  '#1e1445'],
+    ['--bg-light',   '#251a4a'],
+    ['--bg-lighter', '#2d2155']
+];
+var BG_RAMP_SIDEBAR = [
+    ['--bg-darker', '#111128'],
+    ['--bg-hover',  '#342860'],
+    ['--bg-active', '#3d2f6e']
+];
+function uiShift(hex, fromHex, toHex) {
+    var c = uiHexToRgb(hex), f = uiHexToRgb(fromHex), t = uiHexToRgb(toHex);
+    if (!c || !f || !t) return hex;
+    return uiRgbToHex(c[0] + (t[0] - f[0]), c[1] + (t[1] - f[1]), c[2] + (t[2] - f[2]));
+}
+function uiPaintRamp(ramp, fromHex, toHex) {
+    var root = document.documentElement.style;
+    ramp.forEach(function (pair) {
+        root.setProperty(pair[0], uiShift(pair[1], fromHex, toHex));
+    });
+}
+
+function applyUI(ui) {
+    if (!ui) ui = UI_DEFAULTS;
+    var r = ui.accentRed || UI_DEFAULTS.accentRed;
+    var b = ui.accentBlue || UI_DEFAULTS.accentBlue;
+    var g = ui.bgDark || UI_DEFAULTS.bgDark;
+    var s = ui.bgSidebar || UI_DEFAULTS.bgSidebar;
+    var root = document.documentElement.style;
+    // Derive the bright/dark shades from the accent instead of reusing it verbatim:
+    // a light accent used as --accent-red-dark used to paint buttons white (invisible text).
+    root.setProperty('--accent-red', r);
+    root.setProperty('--accent-red-bright', uiShade(r, 0.18));
+    root.setProperty('--accent-red-dark', uiShade(r, -0.35));
+    root.setProperty('--accent-blue', b);
+    root.setProperty('--accent-on', uiTextOn(r));
+    root.setProperty('--accent-blue-on', uiTextOn(b));
+    // repaint the real surfaces (chat area, panels) and the sidebars separately
+    uiPaintRamp(BG_RAMP_MAIN, UI_DEFAULTS.bgDark, g);
+    uiPaintRamp(BG_RAMP_SIDEBAR, UI_DEFAULTS.bgSidebar, s);
+    document.body.style.background = g;
+    document.body.classList.toggle('sidebar-right', ui.sidebarPos === 'right');
+}
+function avatarInitials(name) { return name ? name.charAt(0).toUpperCase() : '?'; }
+
+// Profile picture upload
+var pendingPfp = null;
+if (pfpFile) {
+    pfpFile.addEventListener('change', function () {
+        var file = pfpFile.files && pfpFile.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+            pendingPfp = ev.target.result;
+            pfpPreview.style.backgroundImage = 'url(' + pendingPfp + ')';
+            pfpPreview.style.backgroundSize = 'cover';
+            pfpPreview.style.backgroundPosition = 'center';
+            pfpPreview.textContent = '';
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+if (pfpSave) {
+    pfpSave.addEventListener('click', function () {
+        if (!state.currentUser) { setMsg(pfpMsg, 'Log in first.', false); return; }
+        var avatar = pendingPfp;
+        if (!avatar) {
+            // keep preview background if already set
+            var bg = pfpPreview.style.backgroundImage;
+            if (bg && bg.indexOf('url') >= 0) {
+                avatar = bg.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+            }
+        }
+        if (!avatar) { setMsg(pfpMsg, 'Select an image first.', false); return; }
+        var me = state.currentUser.username;
+        state.currentUser.avatar = avatar;
+        state.users[me] = state.currentUser;
+        pendingPfp = null;
+        // write only this one account's avatar; every other account is left alone
+        updateUserFields(me, { avatar: avatar }, function (e) {
+            if (e) { setMsg(pfpMsg, 'Could not save picture.', false); return; }
+            state.currentUser = state.users[me] || state.currentUser;
+            applyUserAvatar(state.currentUser);
+            setMsg(pfpMsg, 'Profile picture saved!', true);
+            renderMembers();
+            renderAllUsers();
+        });
+    });
+}
+
+if (pfpClear) {
+    pfpClear.addEventListener('click', function () {
+        if (!state.currentUser) { setMsg(pfpMsg, 'Log in first.', false); return; }
+        var me = state.currentUser.username;
+        delete state.currentUser.avatar;
+        state.users[me] = state.currentUser;
+        pendingPfp = null;
+        pfpPreview.style.backgroundImage = '';
+        pfpPreview.textContent = me.charAt(0).toUpperCase();
+        writeDoc(function (d) {
+            if (d.users && d.users[me]) delete d.users[me].avatar;
+        }, function () {
+            state.currentUser = state.users[me] || state.currentUser;
+            applyUserAvatar(state.currentUser); renderMembers(); renderAllUsers();
+        });
+        setMsg(pfpMsg, 'Profile picture removed.', true);
+    });
+}
+function applyAdminClass() { document.body.classList.toggle('is-admin', isAdmin()); }
+
+function setMsg(el, text, ok) {
+    el.textContent = text;
+    el.className = 'auth-msg ' + (ok ? 'ok' : 'err');
+}
+
+function showAuth(view) {
+    viewLogin.classList.toggle('hidden', view !== 'login');
+    viewSignup.classList.toggle('hidden', view !== 'signup');
+    authModal.classList.remove('hidden');
+}
+
+function loadUnlocked(u) {
+    try {
+        var raw = localStorage.getItem('colloquium-unlocked-' + u);
+        if (raw) return JSON.parse(raw) || {};
+    } catch (e) {}
+    return {};
+}
+function saveUnlocked() {
+    if (!state.currentUser) return;
+    try { localStorage.setItem('colloquium-unlocked-' + state.currentUser.username, JSON.stringify(state.unlocked)); } catch (e) {}
+}
+
+function setSession(user) {
+    state.currentUser = user;
+    state.unlocked = loadUnlocked(user.username);
+    if (!user.avatarColor && user.username) user.avatarColor = getAvatarColor(user.username);
+    applyUI(user.ui);
+    currentUsername.textContent = user.username;
+    userAvatar.textContent = user.username.charAt(0).toUpperCase();
+    userStatus.className = 'status-indicator online';
+    userDiscriminator.textContent = '#' + (user.discriminator || '0001');
+    try { localStorage.setItem('colloquium-user', user.username); } catch (e) {}
+    authModal.classList.add('hidden');
+    applyAdminClass();
+    applyUserAvatar(user);
+    state.notifMuted = loadNotifMuted();
+    addNotification(user.username + ' is online.');
+    renderMembers();
+    renderMessages();
+}
+
+// Login — checks bin for existing username
+loginSubmit.addEventListener('click', function () {
+    var u = loginUser.value.trim();
+    var p = loginPass.value;
+    if (!u || !p) { setMsg(loginMsg, 'Please enter your username and password.', false); return; }
+    setMsg(loginMsg, 'Logging in...', true);
+    fetchData(function (err, data) {
+        if (err) { setMsg(loginMsg, 'Could not reach the server. Try again.', false); return; }
+        var users = data.users || {};
+        var found = null;
+        var foundKey = null;
+        Object.keys(users).forEach(function (k) {
+            if (k.toLowerCase() === u.toLowerCase()) {
+                found = users[k];
+                foundKey = k;
+            }
+        });
+        if (!found) { setMsg(loginMsg, 'No account found with that username.', false); return; }
+        if (found.password !== hashPass(p)) { setMsg(loginMsg, 'Incorrect password.', false); return; }
+        state.users = users;
+        setSession(found);
+    });
+});
+
+// Signup — re-reads the bin and adds exactly one account
+signupSubmit.addEventListener('click', function () {
+    var u = signupUser.value.trim();
+    var p = signupPass.value;
+    if (!u || !p) { setMsg(signupMsg, 'Please enter a username and password.', false); return; }
+    if (u.length < 2) { setMsg(signupMsg, 'Username must be at least 2 characters.', false); return; }
+    if (p.length < 4) { setMsg(signupMsg, 'Password must be at least 4 characters.', false); return; }
+    setMsg(signupMsg, 'Creating account...', true);
+    var newUser = {
+        username: u,
+        password: hashPass(p),
+        avatarColor: getAvatarColor(u),
+        status: 'online',
+        discriminator: String(Math.floor(1000 + Math.random() * 9000)),
+        joinedAt: new Date().toISOString()
+    };
+    // The taken-check runs on the freshly read bin, so two people signing up at
+    // the same moment can no longer both grab the same name.
+    writeDoc(function (d) {
+        if (!d.users) d.users = {};
+        var taken = Object.keys(d.users).some(function (k) { return k.toLowerCase() === u.toLowerCase(); });
+        if (taken) throw new Error('taken');
+        d.users[u] = newUser;
+    }, function (e) {
+        if (e) {
+            setMsg(signupMsg, e.message === 'taken'
+                ? 'That username is already taken.'
+                : 'Could not save your account. Try again.', false);
+            return;
+        }
+        setSession(state.users[u] || newUser);
+    });
+});
+
+// Auth navigation
+toSignup.addEventListener('click', function () { viewLogin.classList.add('hidden'); viewSignup.classList.remove('hidden'); });
+toLogin.addEventListener('click', function () { viewSignup.classList.add('hidden'); viewLogin.classList.remove('hidden'); });
+
+
+loginPass.addEventListener('keypress', function (e) { if (e.key === 'Enter') loginSubmit.click(); });
+signupPass.addEventListener('keypress', function (e) { if (e.key === 'Enter') signupSubmit.click(); });
+
+// ============ Rendering ============
+
+function getAvatarColor(username) {
+    var colors = ['#e94560', '#4e73df', '#36b9cc', '#1cc88a', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'];
+    var hash = 0;
+    for (var i = 0; i < username.length; i++) { hash = username.charCodeAt(i) + ((hash << 5) - hash); }
+    return colors[Math.abs(hash) % colors.length];
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// For values that go inside an HTML attribute
+function escapeAttr(text) {
+    return escapeHtml(String(text == null ? '' : text)).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Only http(s) links are ever turned into something clickable
+function isSafeUrl(url) {
+    return /^https?:\/\/[^\s]+$/i.test(String(url || ''));
+}
+
+// Photos can come from the player's files (data URL) or from a link.
+// SVG is deliberately not allowed: an SVG data URL can carry script.
+function isAllowedImageSrc(src) {
+    src = String(src || '');
+    if (isSafeUrl(src)) return true;
+    return /^data:image\/(png|jpe?g|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(src);
+}
+
+// Turn URLs inside already-escaped text into clickable hotlinks
+function linkify(escapedText) {
+    return String(escapedText).replace(/(https?:\/\/[^\s<]+|www\.[^\s<]+)/gi, function (match) {
+        var trailing = '';
+        var tail = match.match(/[)\]\.,!?;:]+$/);
+        if (tail) { trailing = tail[0]; match = match.slice(0, -trailing.length); }
+        if (!match) return trailing;
+        var href = /^www\./i.test(match) ? 'http://' + match : match;
+        return '<a class="message-link" href="' + href + '" target="_blank" rel="noopener noreferrer">' + match + '</a>' + trailing;
+    });
+}
+
+// ============ Brand logo ============
+// Wherever the word "Colloquium" is written — a message, a conversation name, one of
+// the app's own labels — the logo is placed immediately to the left of it. The logo is
+// sized in em, so it always matches whatever text it sits beside.
+function brandMark() {
+    var mark = document.createElement('span');
+    mark.className = 'brand-logo';
+    mark.setAttribute('aria-hidden', 'true');
+    return mark;
+}
+
+// Walks the text nodes of root and slips a logo in front of every "Colloquium".
+// It runs on the rendered DOM (never on a raw HTML string), so it can't corrupt tags,
+// attributes, or the inside of a hyperlink — text inside a link is left alone, and so
+// is text that already has a logo in front of it.
+function brandWordSpans(root) {
+    if (!root || !root.ownerDocument) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+    var nodes = [];
+    while (walker.nextNode()) {
+        var node = walker.currentNode;
+        if (!/colloquium/i.test(node.nodeValue || '')) continue;
+        if (node.parentNode && node.parentNode.closest && node.parentNode.closest('a')) continue;
+        nodes.push(node);
+    }
+    nodes.forEach(function (node) {
+        var text = node.nodeValue;
+        var frag = document.createDocumentFragment();
+        var re = /colloquium/gi;
+        var last = 0, m;
+        while ((m = re.exec(text)) !== null) {
+            var prev = (m.index === 0) ? node.previousSibling : frag.lastChild;
+            var branded = prev && prev.nodeType === 1 && prev.classList && prev.classList.contains('brand-logo');
+            if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+            if (!branded) frag.appendChild(brandMark());
+            frag.appendChild(document.createTextNode(m[0]));
+            last = m.index + m[0].length;
+        }
+        if (!last) return;
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+    });
+}
+
+// The logo lives in icon.png next to index.html, which is what GitHub serves. If that
+// file is ever missing (a copy that only grabbed the code, for instance) fall back to
+// an inlined copy of the same picture, so the brand marks never just disappear.
+var BRAND_LOGO_FALLBACK = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB3klEQVR4AYySS0iUURSAv+lB0QuSioigNlNBtQmiJ0z22LYqCaI2Ucq0a9WmVoGbaFctFCaQXkZk6zYq1Expoi4HFVeCKxHF9+s7/4w6utHhfuf1n3vuuXPPFtb86hfhm3RJfh0F/Q5pltVNFQVe+iFNO3fJcY4mLvFBcitcpIHzdFIDvDdX5SoXeGXgDM3c4ZfBYZmRaQm9zKz+mMCCMusesMBjjSryVu4xfFqe08ojvlDLJ/m4QpbPVPMWiCO2qp8tWuC4Rprfyv1yj7zyq0Qvber2Clq1e2VEtkvSwUn+cosB3SMCg8CUVMmedezT3y2lzRpxhWMUtebksJTa26U1L96OSiJmuGJ5hamoQtrgdQrKftkhm1sWiD+D5BwYd5ehsqez4TJ7W5LUpyxwU3lCpmVzywJFjpq7U+IZ4YDWhPhJudEyq0iGNuLc0ST7kDIeNK4TncSLhJ40HiMV4xSDpOuywJCqi7PKmLIWqrVuy+UyV8r6qvqCnJI4IAolc9CYij8vw4+kyH8/v7ZIEw9p5D4NrJLjAX94asZBiSd9k7IDbV5Y5B81tHAD2CvRcKREszEJYcdFSueawDv3kIxAeFKfgh6u8Z1aunlCh7pE2HX6dXSS4SeQNVcFLAEAAP//nJCgwAAAAAZJREFUAwBWIY+JSfSoxwAAAABJRU5ErkJggg==';
+(function brandLogoSelfHeal() {
+    var probe = new Image();
+    probe.onerror = function () {
+        document.documentElement.style.setProperty('--brand-logo', 'url("' + BRAND_LOGO_FALLBACK + '")');
+        var icon = document.querySelector('link[rel="icon"]');
+        if (icon) icon.href = BRAND_LOGO_FALLBACK;
+    };
+    probe.src = 'icon.png';
+})();
+
+// Message body: optional photo plus text with clickable links
+function renderMessageBody(msg) {
+    var image = msg.image;
+    if (image && !isAllowedImageSrc(image)) image = null;
+    var html = '';
+    if (image) {
+        var tag = '<img class="message-image" src="' + escapeAttr(image) + '" alt="' +
+                  escapeAttr(msg.imageName ? msg.imageName : 'Shared photo') + '">';
+        // only real links get wrapped in an anchor — a data: URL is not clickable
+        html += isSafeUrl(image)
+            ? '<a class="message-image-link" href="' + escapeAttr(image) + '" target="_blank" rel="noopener noreferrer">' + tag + '</a>'
+            : '<span class="message-image-link">' + tag + '</span>';
+        if (msg.imageName) html += '<span class="message-image-name">' + escapeHtml(msg.imageName) + '</span>';
+    }
+    if (msg.content) html += linkify(escapeHtml(msg.content));
+    if (!html) html = '<span class="message-text-empty"></span>';
+    return html;
+}
+
+function formatTimestamp(isoString) {
+    var date = new Date(isoString);
+    var now = new Date();
+    var isToday = date.toDateString() === now.toDateString();
+    var yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+    var isYesterday = date.toDateString() === yesterday.toDateString();
+    var time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (isToday) return 'Today at ' + time;
+    if (isYesterday) return 'Yesterday at ' + time;
+    return date.toLocaleDateString() + ' ' + time;
+}
+
+function formatDateDivider(isoString) {
+    var date = new Date(isoString);
+    return date.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function shouldShowDateDivider(currentMsg, previousMsg) {
+    if (!previousMsg) return true;
+    return new Date(currentMsg.timestamp).toDateString() !== new Date(previousMsg.timestamp).toDateString();
+}
+
+function renderMessages() {
+    var channelMessages = state.messages
+        .filter(function (m) { return m.channel === state.currentChannel; })
+        .sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
+
+    messagesContainer.innerHTML = '';
+    var previousMsg = null;
+
+    channelMessages.forEach(function (msg) {
+        if (shouldShowDateDivider(msg, previousMsg)) {
+            var divider = document.createElement('div');
+            divider.className = 'date-divider';
+            divider.innerHTML = '<span>' + formatDateDivider(msg.timestamp) + '</span>';
+            messagesContainer.appendChild(divider);
+        }
+
+        var msgEl = document.createElement('div');
+
+        if (msg.isSystem) {
+            msgEl.className = 'system-message';
+            msgEl.innerHTML = '<span class="system-icon">&#127881;</span><span>' + escapeHtml(msg.content) + '</span>';
+        } else {
+            msgEl.className = 'message-group' + (msg.pinned ? ' pinned' : '');
+            msgEl.setAttribute('data-message-id', msg.id);
+            var msgUser = state.users[msg.author] || {};
+            var avatarColor = msg.avatarColor || msgUser.avatarColor || getAvatarColor(msg.author);
+            var msgAvatarStyle = 'background: ' + avatarColor + '20; color: ' + avatarColor + '; border: 2px solid ' + avatarColor + '40';
+            var msgAvatarInner = escapeHtml(msg.author.charAt(0).toUpperCase());
+            if (msgUser.avatar) { msgAvatarStyle += '; background-image: url(' + msgUser.avatar + '); background-size: cover; background-position: center;'; msgAvatarInner = ''; }
+            msgEl.innerHTML =
+                '<div class="message-avatar" style="' + msgAvatarStyle + '">' +
+                    msgAvatarInner +
+                '</div>' +
+                '<div class="message-content">' +
+                    '<div class="message-header">' +
+                        '<span class="message-author" style="color: ' + avatarColor + '">' + escapeHtml(msg.author) + '</span>' +
+                        '<span class="message-timestamp">' + formatTimestamp(msg.timestamp) + '</span>' +
+                        (msg.pinned ? '<span class="pinned-flag">&#128204; Pinned</span>' : '') +
+                        '<button class="msg-pin' + (msg.pinned ? ' active' : '') + '" data-msg="' + escapeAttr(msg.id) + '" title="' + (msg.pinned ? 'Unpin message' : 'Pin message') + '">&#128204;</button>' +
+                        (isAdmin() ? '<button class="msg-delete" data-msg="' + escapeAttr(msg.id) + '">&#128465;</button>' : '') +
+                    '</div>' +
+                    '<div class="message-text">' + renderMessageBody(msg) + '</div>' +
+                '</div>';
+        }
+
+        // the logo sits in front of any "Colloquium" the sender typed
+        brandWordSpans(msg.isSystem ? msgEl : msgEl.querySelector('.message-text'));
+
+        messagesContainer.appendChild(msgEl);
+        previousMsg = msg;
+    });
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function renderMembers() {
+    var users = Object.keys(state.users).map(function (k) { return state.users[k]; });
+    var online = users.filter(function (u) { return u.status !== 'offline'; });
+    var offline = users.filter(function (u) { return u.status === 'offline'; });
+
+    membersOnline.innerHTML = '';
+    membersOffline.innerHTML = '';
+
+    online.forEach(function (user) {
+        var memberEl = document.createElement('div');
+        memberEl.className = 'member';
+        var avatarColor = user.avatarColor || getAvatarColor(user.username);
+        var onlineAvatarStyle = 'background: ' + avatarColor + '20; color: ' + avatarColor + '; border: 2px solid ' + avatarColor + '40';
+        var onlineInner = escapeHtml(user.username.charAt(0).toUpperCase());
+        if (user.avatar) { onlineAvatarStyle += '; background-image: url(' + user.avatar + '); background-size: cover; background-position: center;'; onlineInner = ''; }
+        memberEl.innerHTML =
+            '<div class="member-avatar" style="' + onlineAvatarStyle + '">' +
+                onlineInner +
+                '<div class="status-indicator online"></div>' +
+            '</div>' +
+            '<span class="member-name">' + escapeHtml(user.username) + '</span>';
+        membersOnline.appendChild(memberEl);
+    });
+
+    offline.forEach(function (user) {
+        var memberEl = document.createElement('div');
+        memberEl.className = 'member offline';
+        var avatarColor = user.avatarColor || getAvatarColor(user.username);
+        var offlineAvatarStyle = 'background: ' + avatarColor + '20; color: ' + avatarColor + '; border: 2px solid ' + avatarColor + '40';
+        var offlineInner = escapeHtml(user.username.charAt(0).toUpperCase());
+        if (user.avatar) { offlineAvatarStyle += '; background-image: url(' + user.avatar + '); background-size: cover; background-position: center;'; offlineInner = ''; }
+        memberEl.innerHTML =
+            '<div class="member-avatar" style="' + offlineAvatarStyle + '">' +
+                offlineInner +
+                '<div class="status-indicator offline"></div>' +
+            '</div>' +
+            '<span class="member-name">' + escapeHtml(user.username) + '</span>';
+        membersOffline.appendChild(memberEl);
+    });
+
+    onlineCount.textContent = online.length;
+    offlineCount.textContent = offline.length;
+}
+
+function updateChannelHeader() {
+    var channel = state.channels[state.currentChannel];
+    if (channel) {
+        currentChannelName.innerHTML = escapeHtml(channel.name);
+        brandWordSpans(currentChannelName);
+        messageInput.placeholder = 'Message #' + channel.name;
+    }
+}
+
+function renderChannelList() {
+    var list = document.getElementById('channel-list');
+    if (!list) return;
+    list.innerHTML = '';
+    Object.keys(state.channels).forEach(function (key) {
+        var ch = state.channels[key];
+        var el = document.createElement('div');
+        el.className = 'channel' + (key === state.currentChannel ? ' active' : '');
+        el.setAttribute('data-channel', key);
+        var isPriv = ch.visibility === 'private';
+        var unlocked = isPriv ? !!state.unlocked[key] : true;
+        var icon = isPriv ? (unlocked ? '&#128275;' : '&#128274;') : '#';
+        el.innerHTML = '<span class="channel-name">' + icon + ' ' + escapeHtml(ch.name) + '</span><span class="channel-delete" data-chan="' + key + '">&times;</span>';
+        brandWordSpans(el.querySelector('.channel-name'));
+        el.addEventListener('click', function (e) {
+            if (e.target.classList.contains('channel-delete')) return;
+            if (isPriv && !state.unlocked[key]) {
+                // ask for password
+                unlockName.value = ch.name;
+                unlockPass.value = '';
+                unlockMsg.textContent = '';
+                unlockMsg.className = 'auth-msg';
+                unlockModal.classList.remove('hidden');
+                return;
+            }
+            document.querySelectorAll('.channel').forEach(function (c) { c.classList.remove('active'); });
+            el.classList.add('active');
+            state.currentChannel = key;
+            updateChannelHeader();
+            renderMessages();
+        });
+        list.appendChild(el);
+    });
+}
+
+// ============ Channel creation ============
+
+// Modal elements
+var newChannelModal = document.getElementById('newchannel-modal');
+var newChannelClose = document.getElementById('newchannel-close');
+var ncName = document.getElementById('nc-name');
+var ncTopic = document.getElementById('nc-topic');
+var ncPrivate = document.getElementById('nc-private');
+var ncPassword = document.getElementById('nc-password');
+var ncMsg = document.getElementById('nc-msg');
+var newChannelSubmit = document.getElementById('newchannel-submit');
+var unlockModal = document.getElementById('unlock-modal');
+var unlockClose = document.getElementById('unlock-close');
+var unlockName = document.getElementById('unlock-name');
+var unlockPass = document.getElementById('unlock-password');
+var unlockMsg = document.getElementById('unlock-msg');
+var unlockSubmit = document.getElementById('unlock-submit');
+var unlockBtn = document.getElementById('unlock-btn');
+
+// Toggle password field on private checkbox
+ncPrivate.addEventListener('change', function () {
+    ncPassword.classList.toggle('hidden', !ncPrivate.checked);
+});
+
+newChannelClose.addEventListener('click', function () { newChannelModal.classList.add('hidden'); });
+unlockClose.addEventListener('click', function () { unlockModal.classList.add('hidden'); });
+
+var addChannelBtn = document.getElementById('add-channel-btn');
+if (addChannelBtn) {
+    addChannelBtn.addEventListener('click', function () {
+        if (!state.currentUser) { showAuth('login'); return; }
+        ncName.value = '';
+        ncTopic.value = '';
+        ncPrivate.checked = false;
+        ncPassword.classList.add('hidden');
+        ncPassword.value = '';
+        ncMsg.textContent = '';
+        ncMsg.className = 'auth-msg';
+        newChannelModal.classList.remove('hidden');
+    });
+}
+
+newChannelSubmit.addEventListener('click', function () {
+    if (!state.currentUser) return;
+    var name = ncName.value.trim();
+    if (!name) { setMsg(ncMsg, 'Please enter a conversation name.', false); return; }
+    var key = name.toLowerCase().replace(/\\s+/g, '-').replace(/[^a-z0-9\\-]/g, '');
+    if (!key) { setMsg(ncMsg, 'Use letters/numbers for the name.', false); return; }
+    if (state.channels[key]) { setMsg(ncMsg, 'A conversation with that name exists.', false); return; }
+    var isPrivate = ncPrivate.checked;
+    var pass = isPrivate ? ncPassword.value : '';
+    if (isPrivate && pass.length < 4) { setMsg(ncMsg, 'Password must be at least 4 chars.', false); return; }
+    var ch = { name: name, topic: (ncTopic.value.trim() || 'A new conversation'), visibility: isPrivate ? 'private' : 'public' };
+    if (isPrivate) { ch.password = hashPass(pass); }
+    state.channels[key] = ch;
+    state.currentChannel = key;
+    // auto-unlock for creator
+    state.unlocked[key] = true;
+    saveUnlocked();
+    renderChannelList();
+    updateChannelHeader();
+    renderMessages();
+    newChannelModal.classList.add('hidden');
+    // add only this channel; the bin is re-read first so nothing else changes
+    writeDoc(function (d) {
+        if (!d.channels) d.channels = {};
+        d.channels[key] = ch;
+    }, function (e) { if (e) console.error('save err', e); });
+});
+
+unlockBtn.addEventListener('click', function () {
+    if (!state.currentUser) { showAuth('login'); return; }
+    unlockName.value = '';
+    unlockPass.value = '';
+    unlockMsg.textContent = '';
+    unlockMsg.className = 'auth-msg';
+    unlockModal.classList.remove('hidden');
+});
+
+unlockSubmit.addEventListener('click', function () {
+    var name = unlockName.value.trim();
+    var pass = unlockPass.value;
+    if (!name || !pass) { setMsg(unlockMsg, 'Enter conversation name and password.', false); return; }
+    var key = name.toLowerCase().replace(/\\s+/g, '-').replace(/[^a-z0-9\\-]/g, '');
+    var ch = state.channels[key];
+    if (!ch) { setMsg(unlockMsg, 'Conversation not found.', false); return; }
+    if (ch.visibility !== 'private') { setMsg(unlockMsg, 'That conversation is public.', false); return; }
+    if (ch.password !== hashPass(pass)) { setMsg(unlockMsg, 'Incorrect password.', false); return; }
+    state.unlocked[key] = true;
+    saveUnlocked();
+    unlockModal.classList.add('hidden');
+    state.currentChannel = key;
+    document.querySelectorAll('.channel').forEach(function (c) { c.classList.remove('active'); });
+    var el = document.querySelector('.channel[data-channel="' + key + '"]');
+    if (el) el.classList.add('active');
+    updateChannelHeader();
+    renderMessages();
+});
+
+// ============ Message Sending ============
+
+function sendMessage() {
+    var content = messageInput.value.trim();
+    if (!content || !state.currentUser) return;
+    postMessage({ content: content });
+    messageInput.value = '';
+}
+
+messageInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') { sendMessage(); }
+});
+
+// ============ Button Handlers ============
+
+// Voice chat (mute / deafen) was removed — this build has no voice features.
+
+settingsBtn.addEventListener('click', function () {
+    if (!state.currentUser) { showAuth('login'); return; }
+    settingsUsername.textContent = state.currentUser.username;
+    settingsStatus.textContent = 'Online';
+    pendingPfp = null;
+    if (pfpPreview) {
+        if (state.currentUser.avatar) {
+            pfpPreview.style.backgroundImage = 'url(' + state.currentUser.avatar + ')';
+            pfpPreview.style.backgroundSize = 'cover';
+            pfpPreview.style.backgroundPosition = 'center';
+            pfpPreview.textContent = '';
+        } else {
+            pfpPreview.style.backgroundImage = '';
+            pfpPreview.textContent = state.currentUser.username.charAt(0).toUpperCase();
+        }
+    }
+    settingsPanel.classList.remove('hidden');
+});
+
+settingsClose.addEventListener('click', function () { settingsPanel.classList.add('hidden'); });
+
+// Puts the pickers back to whatever the current ui object holds
+function fillUiPickers(ui) {
+    ui = ui || UI_DEFAULTS;
+    if (uiAccentRed) uiAccentRed.value = ui.accentRed || UI_DEFAULTS.accentRed;
+    if (uiAccentBlue) uiAccentBlue.value = ui.accentBlue || UI_DEFAULTS.accentBlue;
+    if (uiBgDark) uiBgDark.value = ui.bgDark || UI_DEFAULTS.bgDark;
+    if (uiBgSidebar) uiBgSidebar.value = ui.bgSidebar || UI_DEFAULTS.bgSidebar;
+    if (uiSidebarPos) uiSidebarPos.value = ui.sidebarPos || 'left';
+}
+
+// Applies a ui object, stores it on the account and reports back in the panel
+function persistUi(ui, okMsg, failMsg) {
+    var me = state.currentUser.username;
+    state.currentUser.ui = ui;
+    state.users[me] = state.currentUser;
+    fillUiPickers(ui);
+    applyUI(ui);
+    // save this one account's ui only — never the whole user list
+    updateUserFields(me, { ui: ui }, function (e) {
+        state.currentUser = state.users[me] || state.currentUser;
+        if (!uiMsg) return;
+        uiMsg.textContent = e ? failMsg : okMsg;
+        uiMsg.className = 'auth-msg ' + (e ? 'err' : 'ok');
+    });
+}
+
+if (openCustomizeUi) {
+    openCustomizeUi.addEventListener('click', function () {
+        if (!panelCustomizeUi) return;
+        if (!state.currentUser) { showAuth('login'); return; }
+        fillUiPickers(state.currentUser.ui || UI_DEFAULTS);
+        panelCustomizeUi.classList.toggle('hidden');
+    });
+}
+
+if (uiSave) {
+    uiSave.addEventListener('click', function () {
+        if (!state.currentUser) { showAuth('login'); return; }
+        persistUi({
+            accentRed: uiAccentRed.value,
+            accentBlue: uiAccentBlue.value,
+            bgDark: uiBgDark.value,
+            bgSidebar: uiBgSidebar.value,
+            sidebarPos: uiSidebarPos.value
+        }, 'UI saved!', 'Could not save UI.');
+    });
+}
+
+// Put the theme back to the stock Red & Blue look
+if (uiReset) {
+    uiReset.addEventListener('click', function () {
+        if (!state.currentUser) { showAuth('login'); return; }
+        if (!confirm('Reset the UI back to the default Red & Blue theme?')) return;
+        persistUi({
+            accentRed: UI_DEFAULTS.accentRed,
+            accentBlue: UI_DEFAULTS.accentBlue,
+            bgDark: UI_DEFAULTS.bgDark,
+            bgSidebar: UI_DEFAULTS.bgSidebar,
+            sidebarPos: UI_DEFAULTS.sidebarPos
+        }, 'UI reset to the default theme.', 'UI reset here, but it could not be saved to your account.');
+    });
+}
+
+logoutBtn.addEventListener('click', function () {
+    try { localStorage.removeItem('colloquium-user'); } catch (e) {}
+    state.currentUser = null;
+    currentUsername.textContent = 'Guest';
+    userAvatar.textContent = '?';
+    userStatus.className = 'status-indicator offline';
+    userDiscriminator.textContent = '#0001';
+    settingsPanel.classList.add('hidden');
+    showAuth('login');
+});
+
+// Delete account handler
+deleteSubmit.addEventListener('click', function () {
+    if (!state.currentUser) {
+        deleteMsg.textContent = 'You are not logged in.';
+        deleteMsg.className = 'auth-msg err';
+        return;
+    }
+    var confirmName = deleteConfirm.value.trim();
+    if (confirmName !== state.currentUser.username) {
+        deleteMsg.textContent = 'Type your exact username to confirm deletion.';
+        deleteMsg.className = 'auth-msg err';
+        return;
+    }
+    deleteMsg.textContent = 'Deleting account...';
+    deleteMsg.className = 'auth-msg ok';
+    var me = state.currentUser.username;
+    // removes exactly one account from the freshly read bin
+    writeDoc(function (d) {
+        if (d.users && d.users[me]) delete d.users[me];
+    }, function (e) {
+        if (e) {
+            deleteMsg.textContent = 'Could not delete your account. Try again.';
+            deleteMsg.className = 'auth-msg err';
+            return;
+        }
+        try { localStorage.removeItem('colloquium-user'); } catch (e2) {}
+        state.currentUser = null;
+        currentUsername.textContent = 'Guest';
+        userAvatar.textContent = '?';
+        userStatus.className = 'status-indicator offline';
+        userDiscriminator.textContent = '#0001';
+        settingsPanel.classList.add('hidden');
+        deleteConfirm.value = '';
+        deleteMsg.textContent = 'Account deleted.';
+        deleteMsg.className = 'auth-msg ok';
+        showAuth('login');
+    });
+});
+
+pinnedBtn.addEventListener('click', function () { renderPinnedMessages(); pinnedPanel.classList.remove('hidden'); });
+pinnedClose.addEventListener('click', function () { pinnedPanel.classList.add('hidden'); });
+
+function renderPinnedMessages() {
+    var pinned = state.messages
+        .filter(function (m) { return m.pinned; })
+        .sort(function (a, b) { return new Date(a.timestamp) - new Date(b.timestamp); });
+    pinnedList.innerHTML = '';
+    if (pinned.length === 0) {
+        pinnedList.innerHTML = '<p class="notif-empty">No pinned messages yet.<br>Hover a message and press &#128204; to pin it.</p>';
+        return;
+    }
+    pinned.forEach(function (msg) {
+        var el = document.createElement('div');
+        el.className = 'message-group pinned';
+        var avatarColor = msg.avatarColor || getAvatarColor(msg.author);
+        el.innerHTML =
+            '<div class="message-avatar" style="background: ' + avatarColor + '20; color: ' + avatarColor + '; border: 2px solid ' + avatarColor + '40">' +
+                escapeHtml(msg.author.charAt(0).toUpperCase()) +
+            '</div>' +
+            '<div class="message-content">' +
+                '<div class="message-header">' +
+                    '<span class="message-author" style="color: ' + avatarColor + '">' + escapeHtml(msg.author) + '</span>' +
+                    '<span class="message-timestamp">' + formatTimestamp(msg.timestamp) + '</span>' +
+                    '<button class="msg-pin active" data-msg="' + escapeAttr(msg.id) + '" title="Unpin message">&#128204;</button>' +
+                '</div>' +
+                '<div class="message-text">' + renderMessageBody(msg) + '</div>' +
+            '</div>';
+        brandWordSpans(el.querySelector('.message-text'));
+        pinnedList.appendChild(el);
+    });
+}
+
+// Unpin from the pinned panel
+pinnedList.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.msg-pin[data-msg]');
+    if (!btn) return;
+    togglePin(btn.getAttribute('data-msg'));
+});
+
+// ============ Notifications ============
+
+function addNotification(text, kind) {
+    if (!state.currentUser || state.notifMuted) return;
+    state.notifications.unshift({
+        id: 'notif-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
+        text: text,
+        kind: kind || 'info',
+        time: new Date().toISOString()
+    });
+    if (state.notifications.length > 100) state.notifications.length = 100;
+    state.notifUnread++;
+    updateNotifBadge();
+    if (!notificationsPanel.classList.contains('hidden')) renderNotifications();
+}
+
+function updateNotifBadge() {
+    if (!notificationsBtn) return;
+    var show = state.notifUnread > 0;
+    notificationsBtn.classList.toggle('has-unread', show);
+    notificationsBtn.setAttribute('data-count', state.notifUnread > 9 ? '9+' : String(state.notifUnread));
+}
+
+function renderNotifications() {
+    var muted = !!state.notifMuted;
+    var html = '' +
+        '<div class="settings-item"><label>Status</label><span>' + (muted ? 'Muted' : 'On') + '</span></div>' +
+        '<div class="settings-item"><label>Mentions</label><span>Highlighted</span></div>' +
+        '<div class="settings-item"><label>Events</label><span>' + state.notifications.length + '</span></div>' +
+        '<button class="save-btn" id="notif-toggle">' + (muted ? 'Unmute notifications' : 'Mute notifications') + '</button>';
+    if (state.notifications.length === 0) {
+        html += '<p class="notif-empty">Nothing to report.<br>New activity in other conversations shows up here.</p>';
+    } else {
+        state.notifications.forEach(function (n) {
+            html += '<div class="notif-event' + (n.kind === 'mention' ? ' mention' : '') + '">' +
+                        '<span class="notif-text">' + linkify(escapeHtml(n.text)) + '</span>' +
+                        '<span class="notif-time">' + formatTimestamp(n.time) + '</span>' +
+                    '</div>';
+        });
+        html += '<button class="logout-btn" id="notif-clear">Clear notifications</button>';
+    }
+    notificationsList.innerHTML = html;
+    brandWordSpans(notificationsList);
+
+    var toggle = document.getElementById('notif-toggle');
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            state.notifMuted = !state.notifMuted;
+            saveNotifMuted();
+            renderNotifications();
+        });
+    }
+    var clear = document.getElementById('notif-clear');
+    if (clear) {
+        clear.addEventListener('click', function () {
+            state.notifications = [];
+            state.notifUnread = 0;
+            updateNotifBadge();
+            renderNotifications();
+        });
+    }
+}
+
+function loadNotifMuted() {
+    if (!state.currentUser) return false;
+    try { return localStorage.getItem('colloquium-notif-muted-' + state.currentUser.username) === '1'; } catch (e) { return false; }
+}
+function saveNotifMuted() {
+    if (!state.currentUser) return;
+    try { localStorage.setItem('colloquium-notif-muted-' + state.currentUser.username, state.notifMuted ? '1' : '0'); } catch (e) {}
+}
+
+notificationsBtn.addEventListener('click', function () {
+    if (!state.currentUser) { showAuth('login'); return; }
+    renderNotifications();
+    notificationsPanel.classList.remove('hidden');
+    // opening the panel marks everything as read
+    state.notifUnread = 0;
+    updateNotifBadge();
+});
+
+notificationsClose.addEventListener('click', function () { notificationsPanel.classList.add('hidden'); });
+
+toggleMembersBtn.addEventListener('click', function () { memberList.classList.toggle('visible'); });
+
+// ============ Photos from the player's own files ============
+// Private conversations: always allowed. Public conversations: only after the
+// secret code has been entered (once per session).
+function canSharePhotos() {
+    if (!state.currentUser) { showAuth('login'); return false; }
+    var channel = state.channels[state.currentChannel] || {};
+    if (channel.visibility === 'private') return true;
+    if (state.photoUnlocked) return true;
+    var code = prompt('Sending photos in a public conversation needs the secret code.\nEnter the code:');
+    if (code === null) return false;
+    if (code.trim() === PHOTO_CODE) { state.photoUnlocked = true; return true; }
+    alert('That code is not correct, so the photo was not sent.');
+    return false;
+}
+
+// The file dialog steals focus from the message box, so put the caret back where
+// it was (end of the message) as soon as the picker closes — whether a photo was
+// chosen or the dialog was cancelled.
+function restoreInputFocus() {
+    try {
+        if (messageInput.disabled || messageInput.readOnly) return;
+        messageInput.focus();
+        var end = messageInput.value.length;
+        if (messageInput.setSelectionRange) messageInput.setSelectionRange(end, end);
+    } catch (e) {}
+}
+
+// Every message lives in the shared bin, so photos are shrunk before they are
+// stored: big enough to look good, small enough not to choke the bin or the poll.
+var PHOTO_MAX_CHARS = 350000;
+var PHOTO_ATTEMPTS = [
+    { max: 1280, quality: 0.75 },
+    { max: 1280, quality: 0.6 },
+    { max: 960, quality: 0.5 },
+    { max: 640, quality: 0.45 }
+];
+
+// The OS file dialog takes focus away from the page. This flag makes sure the text
+// cursor goes straight back into the message box when the dialog closes, whether a
+// photo was picked or the dialog was cancelled, so the caret is never left stranded.
+var photoPickerOpen = false;
+
+attachBtn.addEventListener('click', function () {
+    if (!canSharePhotos()) return;
+    photoFile.value = '';   // lets you pick the same file twice
+    photoPickerOpen = true;
+    photoFile.click();
+});
+
+// the page gets focus back as soon as the file dialog closes
+window.addEventListener('focus', function () {
+    if (!photoPickerOpen) return;
+    photoPickerOpen = false;
+    setTimeout(restoreInputFocus, 0);
+});
+
+photoFile.addEventListener('change', function () {
+    var file = photoFile.files && photoFile.files[0];
+    photoPickerOpen = false;
+    if (file) readPhotoFile(file);
+    setTimeout(restoreInputFocus, 0);
+});
+
+function readPhotoFile(file) {
+    if (file.type.indexOf('image/') !== 0) { alert('That file is not an image.'); return; }
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+        var img = new Image();
+        img.onload = function () { storePhoto(img, file.name); };
+        img.onerror = function () { alert('That image could not be opened.'); };
+        img.src = ev.target.result;
+    };
+    reader.onerror = function () { alert('That file could not be read.'); };
+    reader.readAsDataURL(file);
+}
+
+// Shrink to the first setting that fits inside the size cap. Each attempt is a full
+// canvas encode, and running them back-to-back used to freeze the tab (the pointer
+// would sit there unresponsive) on big photos — so yield to the browser between tries.
+function storePhoto(img, name) {
+    var attempt = 0;
+    function next() {
+        if (attempt >= PHOTO_ATTEMPTS.length) {
+            alert('That photo is still too big after shrinking. Try a smaller image.');
+            return;
+        }
+        var settings = PHOTO_ATTEMPTS[attempt++];
+        var dataUrl = shrinkPhoto(img, settings.max, settings.quality);
+        if (dataUrl && dataUrl.length <= PHOTO_MAX_CHARS) {
+            postMessage({ image: dataUrl, imageName: name });
+            return;
+        }
+        setTimeout(next, 0);
+    }
+    next();
+}
+
+function shrinkPhoto(img, maxDim, quality) {
+    var w = img.naturalWidth || img.width;
+    var h = img.naturalHeight || img.height;
+    if (!w || !h) return null;
+    var scale = Math.min(1, maxDim / Math.max(w, h));
+    var canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(w * scale));
+    canvas.height = Math.max(1, Math.round(h * scale));
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0d0d1a';   // photos with transparency get the theme background
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    try { return canvas.toDataURL('image/jpeg', quality); } catch (e) { return null; }
+}
+
+// ============ Emoji picker ============
+var EMOJIS = [
+    // smileys & emotion
+    '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠', '😈', '👿', '🤡', '💩', '👻', '💀', '☠️', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾',
+    // people & gestures
+    '👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✍️', '💅', '🤳', '💪', '🦾', '🦵', '🦶', '👂', '👃', '🧠', '🦷', '🦴', '👀', '👁️', '👅', '👄', '💋', '👶', '🧒', '👦', '👧', '🧑', '👱', '👨', '🧔', '👩', '🧓', '👴', '👵', '🙍', '🙎', '🙅', '🙆', '💁', '🙋', '🧏', '🙇', '🤦', '🤷', '👮', '🕵️', '💂', '👷', '🤴', '👸', '👳', '👲', '🧕', '🤵', '👰', '🤰', '🤱', '👼', '🎅', '🤶', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧝', '🧞', '🧟', '💆', '💇', '🚶', '🧍', '🧎', '🏃', '💃', '🕺', '🕴️', '👯', '🧖', '🧗', '🤺', '🏇', '⛷️', '🏂', '🏌️', '🏄', '🚣', '🏊', '⛹️', '🏋️', '🚴', '🚵', '🤸', '🤼', '🤽', '🤾', '🤹', '🧘', '🛀', '🛌', '👭', '👫', '👬', '💏', '💑', '👪',
+    // animals & nature
+    '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐈', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦦', '🦥', '🐁', '🐀', '🐿️', '🦔', '🐾', '🐉', '🐲',
+    // plants, sky & weather
+    '🌵', '🎄', '🌲', '🌳', '🌴', '🌱', '🌿', '☘️', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🐚', '🌾', '💐', '🌷', '🌹', '🥀', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '🪐', '💫', '⭐', '🌟', '✨', '⚡', '☄️', '💥', '🔥', '🌪️', '🌈', '☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '🌨️', '❄️', '☃️', '⛄', '🌬️', '💨', '💧', '💦', '☔', '☂️', '🌊', '🌫️',
+    // food & drink
+    '🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🌽', '🥕', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🥗', '🥘', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍩', '🍪', '🌰', '🥜', '🍯', '🥛', '🍼', '☕', '🍵', '🧃', '🥤', '🍶', '🍺', '🍻', '🥂', '🍷', '🥃', '🍸', '🍹', '🧉', '🍾', '🧊',
+    // activity, travel & objects
+    '⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🏓', '🏸', '🥅', '🏒', '🏑', '🥍', '🏏', '🥊', '🥋', '🎽', '🛹', '🛷', '⛸️', '🥌', '🎿', '⛳', '🏹', '🎣', '🎯', '🎳', '🎮', '🕹️', '🎲', '🧩', '♟️', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🎷', '🎺', '🎸', '🎻', '📱', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '💽', '💾', '💿', '📀', '📷', '📸', '📹', '🎥', '📽️', '🎞️', '📞', '☎️', '📟', '📠', '📺', '📻', '🧭', '⏱️', '⏲️', '⏰', '🕰️', '⌛', '⏳', '📡', '🔋', '🔌', '💡', '🔦', '🕯️', '🧯', '🛢️', '💸', '💵', '💰', '💳', '💎', '⚖️', '🧰', '🔧', '🔨', '⚒️', '🛠️', '⛏️', '🔩', '⚙️', '🧱', '⛓️', '🧲', '🔫', '💣', '🧨', '🪓', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '🏺', '🔮', '📿', '🧿', '💈', '⚗️', '🔭', '🔬', '🕳️', '💊', '💉', '🩹', '🩺', '🌡️', '🧬', '🦠', '🧫', '🧪', '🚪', '🛏️', '🛋️', '🪑', '🚽', '🛁', '🚿', '🧴', '🧷', '🧹', '🧺', '🧻', '🧼', '🪒', '🧽', '🧦', '🧤', '🧣', '👕', '👖', '🩳', '👔', '👗', '👘', '🥻', '🩱', '🩲', '👙', '👚', '🥼', '🦺', '👛', '👜', '👝', '🎒', '🩴', '👞', '👟', '🥾', '🥿', '👠', '👡', '🩰', '👢', '👑', '👒', '🎩', '🎓', '🧢', '⛑️', '💄', '💍', '🌂', '💼', '🛍️', '🎁', '🎈', '🎏', '🎀', '🎊', '🎉', '🎎', '🏮', '🎐', '🧧', '✉️', '📩', '📨', '📧', '💌', '📥', '📤', '📦', '🏷️', '📪', '📫', '📬', '📭', '📮', '📯', '📜', '📃', '📄', '📑', '🧾', '📊', '📈', '📉', '🗒️', '🗓️', '📅', '📇', '🗃️', '🗳️', '🗄️', '📋', '📁', '📂', '🗂️', '🗞️', '📰', '📓', '📔', '📒', '📕', '📗', '📘', '📙', '📚', '📖', '🔖', '🔗', '📎', '🖇️', '📐', '📏', '📌', '📍', '✂️', '🖊️', '🖋️', '✒️', '🖌️', '🖍️', '📝', '✏️', '🔍', '🔎', '🔏', '🔐', '🔒', '🔓',
+    // hearts & symbols
+    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️', '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '🆔', '⚛️', '🉑', '☢️', '☣️', '📴', '📳', '🈶', '🈚', '🈸', '🈺', '🈷️', '✴️', '🆚', '💮', '🉐', '㊙️', '㊗️', '🈴', '🈵', '🈹', '🈲', '🅰️', '🅱️', '🆎', '🆑', '🅾️', '🆘', '❌', '⭕', '🛑', '⛔', '📛', '🚫', '💯', '💢', '♨️', '🚷', '🚯', '🚳', '🚱', '🔞', '📵', '🚭', '❗', '❕', '❓', '❔', '‼️', '⁉️', '🔅', '🔆', '〽️', '⚠️', '🚸', '🔱', '⚜️', '🔰', '♻️', '✅', '🈯', '💹', '❇️', '✳️', '❎', '🌐', '💠', 'Ⓜ️', '🌀', '💤', '🏧', '🚾', '♿', '🅿️', '🈳', '🈂️', '🛂', '🛃', '🛄', '🛅', '🚹', '🚺', '🚼', '🚻', '🚮', '🎦', '📶', '🈁', '🔣', 'ℹ️', '🔤', '🔡', '🔠', '🆖', '🆗', '🆙', '🆒', '🆕', '🆓', '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🔢', '#️⃣', '*️⃣', '▶️', '⏸️', '⏯️', '⏹️', '⏺️', '⏭️', '⏮️', '⏩', '⏪', '⏫', '⏬', '◀️', '🔼', '🔽', '➡️', '⬅️', '⬆️', '⬇️', '↗️', '↘️', '↙️', '↖️', '↕️', '↔️', '↪️', '↩️', '⤴️', '⤵️', '🔀', '🔁', '🔂', '🔄', '🔃', '🎵', '🎶', '➕', '➖', '➗', '✖️', '♾️', '💲', '💱', '™️', '©️', '®️', '〰️', '➰', '➿', '🔚', '🔙', '🔛', '🔝', '🔜', '✔️', '☑️', '🔘', '🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪', '🟤', '🔺', '🔻', '🔸', '🔹', '🔶', '🔷', '🔳', '🔲', '▪️', '▫️', '◾', '◽', '◼️', '◻️', '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '⬛', '⬜', '🟫', '🔈', '🔇', '🔉', '🔊', '🔔', '🔕', '📣', '📢', '💬', '💭', '🗯️', '♠️', '♣️', '♥️', '♦️', '🃏', '🎴', '🀄', '🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🚚', '🚛', '🚜', '🛵', '🏍️', '🚲', '🛴', '🚨', '🚔', '🚍', '🚘', '🚖', '🚡', '🚠', '🚟', '🚃', '🚋', '🚞', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚉', '✈️', '🛫', '🛬', '🛩️', '💺', '🛰️', '🚀', '🛸', '🚁', '🛶', '⛵', '🚤', '🛥️', '🛳️', '⛴️', '🚢', '⚓', '⛽', '🚧', '🚦', '🚥', '🗺️', '🗿', '🗽', '🗼', '🏰', '🏯', '🏟️', '🎡', '🎢', '🎠', '⛲', '⛱️', '🏖️', '🏝️', '🏜️', '🌋', '⛰️', '🏔️', '🗻', '🏕️', '⛺', '🏠', '🏡', '🏘️', '🏚️', '🏗️', '🏭', '🏢', '🏬', '🏣', '🏤', '🏥', '🏦', '🏨', '🏪', '🏫', '🏩', '💒', '🏛️', '⛪', '🕌', '🕍', '🛕', '🕋', '⛩️', '🛤️', '🛣️', '🗾', '🎑', '🏞️', '🌅', '🌄', '🌠', '🎇', '🎆', '🌇', '🌆', '🏙️', '🌃', '🌌', '🌉', '🌁'
+];
+// strip duplicates that sneak into the list above
+EMOJIS = EMOJIS.filter(function (e, i, all) { return all.indexOf(e) === i; });
+
+function buildEmojiPicker() {
+    if (!emojiPicker || emojiPicker.getAttribute('data-built')) return;
+    EMOJIS.forEach(function (emoji) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = emoji;
+        b.title = emoji;
+        b.addEventListener('click', function () {
+            messageInput.value += emoji;
+            messageInput.focus();
+        });
+        emojiPicker.appendChild(b);
+    });
+    emojiPicker.setAttribute('data-built', '1');
+}
+
+emojiBtn.addEventListener('click', function (e) {
+    if (!state.currentUser) { showAuth('login'); return; }
+    e.stopPropagation();
+    buildEmojiPicker();
+    emojiPicker.classList.toggle('hidden');
+});
+
+// close the picker when clicking anywhere else, or with Escape
+document.addEventListener('click', function (e) {
+    if (!emojiPicker || emojiPicker.classList.contains('hidden')) return;
+    if (e.target === emojiBtn || emojiPicker.contains(e.target)) return;
+    emojiPicker.classList.add('hidden');
+});
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && emojiPicker) emojiPicker.classList.add('hidden');
+});
+
+// Single place that builds + saves a message (text and/or photo)
+function postMessage(fields) {
+    if (!state.currentUser) return;
+    var newMessage = {
+        id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+        channel: state.currentChannel,
+        author: state.currentUser.username,
+        avatarColor: state.currentUser.avatarColor,
+        content: fields.content || '',
+        timestamp: new Date().toISOString(),
+        isSystem: false,
+        pinned: false
+    };
+    if (fields.image) {
+        newMessage.image = fields.image;
+        if (fields.imageName) newMessage.imageName = fields.imageName;
+    }
+    state.messages.push(newMessage);
+    state.knownMessageIds[newMessage.id] = true;
+    renderMessages();
+    // appends this one message to the freshly read bin; the user list and the
+    // channels are simply carried along untouched, so nobody can be erased
+    appendMessage(newMessage, function (e) {
+        if (!e) return;
+        // the bin refused the message (usually a photo that pushed it over the size limit)
+        state.messages = state.messages.filter(function (m) { return m.id !== newMessage.id; });
+        delete state.knownMessageIds[newMessage.id];
+        renderMessages();
+        alert('Could not save that message. If it was a photo, try a smaller one.');
+    });
+}
+
+// ============ Utility ============
+
+function addSystemMessage(content) {
+    var msg = {
+        id: 'msg-' + Date.now() + '-sys',
+        channel: state.currentChannel,
+        author: 'System',
+        avatarColor: '#e94560',
+        content: content,
+        timestamp: new Date().toISOString(),
+        isSystem: true
+    };
+    state.messages.push(msg);
+    appendMessage(msg, function () {});
+    renderMessages();
+}
+
+// ============ Users Panel ============
+
+usersBtn.addEventListener('click', function () { renderAllUsers(); usersPanel.classList.remove('hidden'); });
+usersClose.addEventListener('click', function () { usersPanel.classList.add('hidden'); });
+
+function renderAllUsers() {
+    fetchData(function (err, data) {
+        if (err || !data) return;
+        state.users = data.users || state.users;
+        allUsersList.innerHTML = '';
+        var usernames = Object.keys(state.users);
+        if (usernames.length === 0) {
+            allUsersList.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">No users yet.</p>';
+            return;
+        }
+        usernames.forEach(function (u) {
+            var user = state.users[u];
+            var card = document.createElement('div');
+            card.className = 'member-card';
+            var avatarColor = user.avatarColor || getAvatarColor(u);
+            var uAvatarStyle = 'background: ' + avatarColor + '30; color: ' + avatarColor + '; border-color: ' + avatarColor + '60';
+            var uAvatarInner = escapeHtml(u.charAt(0).toUpperCase());
+            if (user.avatar) { uAvatarStyle += '; background-image: url(' + user.avatar + '); background-size: cover; background-position: center;'; uAvatarInner = ''; }
+            card.innerHTML =
+                '<div class="dc-avatar" style="' + uAvatarStyle + '">' +
+                    uAvatarInner +
+                '</div>' +
+                '<div class="member-info">' +
+                    '<span class="member-name">' + escapeHtml(u) + '</span>' +
+                    '<span class="member-status">' + (user.status || 'registered') + '</span>' +
+                '</div>' +
+                (isAdmin() ? '<button class="msg-delete" data-user="' + u + '">&#128465;</button>' : '');
+            allUsersList.appendChild(card);
+            if (isAdmin()) {
+                var delBtn = card.querySelector('.msg-delete');
+                delBtn.addEventListener('click', function () { deleteAccountAdmin(u); });
+            }
+        });
+    });
+}
+
+function deleteAccountAdmin(target) {
+    if (!isAdmin()) return;
+    if (!confirm('Delete account "' + target + '"? This cannot be undone.')) return;
+    // removes exactly that one account from the freshly read bin
+    writeDoc(function (d) {
+        if (d.users && d.users[target]) delete d.users[target];
+    }, function (e) {
+        if (e) { alert('Could not delete account. Try again.'); return; }
+        renderAllUsers(); renderMembers();
+    });
+}
+
+// ============ Pin / unpin messages ============
+
+function togglePin(msgId) {
+    if (!state.currentUser) { showAuth('login'); return; }
+    var found = null;
+    state.messages.forEach(function (m) {
+        if (m.id === msgId) { m.pinned = !m.pinned; found = m; }
+    });
+    if (!found) return;
+    // the wanted value is sent explicitly, so two quick clicks cannot fight
+    setMessagePinned(msgId, !!found.pinned, function () {});
+    renderMessages();
+    if (!pinnedPanel.classList.contains('hidden')) renderPinnedMessages();
+}
+
+// ============ Message actions (pin / admin delete) ============
+document.getElementById('messages').addEventListener('click', function (e) {
+    var pinBtn = e.target.closest && e.target.closest('.msg-pin[data-msg]');
+    if (pinBtn) {
+        e.stopPropagation();
+        togglePin(pinBtn.getAttribute('data-msg'));
+        return;
+    }
+    var btn = e.target.closest && e.target.closest('.msg-delete[data-msg]');
+    if (!btn || !isAdmin()) return;
+    e.stopPropagation();
+    var msgId = btn.getAttribute('data-msg');
+    if (!confirm('Delete this message? Cannot be undone.')) return;
+    state.messages = state.messages.filter(function (m) { return m.id !== msgId; });
+    removeMessageById(msgId, function (e) { if (e) alert('Could not delete that message. Try again.'); });
+    renderMessages();
+});
+
+// ============ Channel delete (admin) ============
+document.querySelector('.channel-category').addEventListener('click', function (e) {
+    var del = e.target.closest && e.target.closest('.channel-delete');
+    if (!del || !isAdmin()) return;
+    e.stopPropagation();
+    var ch = del.getAttribute('data-chan');
+    // Protect 'general'
+    if (ch === 'general') { alert('You cannot delete the #general channel.'); return; }
+    if (!confirm('Delete entire channel #' + ch + '? All messages in it will be removed.')) return;
+    // remove messages for that channel
+    state.messages = state.messages.filter(function (m) { return m.channel !== ch; });
+    delete state.channels[ch];
+    // remove sidebar element
+    var channelEl = document.querySelector('.channel[data-channel="' + ch + '"]');
+    if (channelEl) channelEl.remove();
+    // update current channel if needed
+    if (state.currentChannel === ch) {
+        state.currentChannel = 'general';
+        try { document.querySelector('.channel[data-channel="general"]').classList.add('active'); } catch (e) {}
+        updateChannelHeader();
+        renderMessages();
+    }
+    // re-read the bin, then remove only this channel and its messages
+    writeDoc(function (d) {
+        if (d.channels) delete d.channels[ch];
+        if (d.messages) d.messages = d.messages.filter(function (m) { return m.channel !== ch; });
+    }, function () {});
+});
+
+// ============ Polling ============
+
+function pollForUpdates() {
+    fetchData(function (err, data) {
+        if (err || !data) return;
+        if (data.lastUpdated && data.lastUpdated !== state.lastFetch) {
+            state.lastFetch = data.lastUpdated;
+            if (data.messages && JSON.stringify(data.messages) !== JSON.stringify(state.messages)) {
+                state.messages = data.messages;
+                renderMessages();
+                if (!pinnedPanel.classList.contains('hidden')) renderPinnedMessages();
+                notifyAboutNewMessages();
+            }
+            if (data.users && JSON.stringify(data.users) !== JSON.stringify(state.users)) {
+                state.users = data.users;
+                renderMembers();
+                renderMessages();
+            }
+        }
+    });
+}
+
+// New messages from other people go to the notifications panel, never to the chat
+function notifyAboutNewMessages() {
+    var me = state.currentUser ? state.currentUser.username : null;
+    state.messages.forEach(function (m) {
+        if (state.knownMessageIds[m.id]) return;
+        state.knownMessageIds[m.id] = true;
+        if (m.isSystem || !me) return;
+        if (m.author === me || m.channel === state.currentChannel) return;
+        var channel = state.channels[m.channel] || {};
+        var label = channel.name || m.channel;
+        var body = m.image ? 'sent a photo' : String(m.content || '').slice(0, 60);
+        var mentioned = m.content && m.content.toLowerCase().indexOf('@' + me.toLowerCase()) >= 0;
+        addNotification(m.author + ' in #' + label + ': ' + body, mentioned ? 'mention' : 'info');
+    });
+}
+
+// ============ Initialize ============
+
+function init() {
+    applyUI(UI_DEFAULTS);
+    fetchData(function (err, data) {
+        if (err || !data) {
+            console.error('Failed to initialize:', err);
+            return;
+        }
+
+        state.channels = data.channels || {};
+        if (!Object.keys(state.channels).length) {
+            state.channels = { general: { name: 'general', topic: 'General discussion for everyone' }, introductions: { name: 'introductions', topic: 'Introduce yourself!' }, random: { name: 'random', topic: 'Anything goes' }, help: { name: 'help', topic: 'Ask for help here' } };
+        }
+        state.users = data.users || {};
+        state.messages = data.messages || [];
+        state.lastFetch = data.lastUpdated || null;
+        // everything already in the bin counts as "seen" from now on
+        state.messages.forEach(function (m) { state.knownMessageIds[m.id] = true; });
+
+        renderChannelList();
+        renderMembers();
+        updateChannelHeader();
+        renderMessages();
+        updateNotifBadge();
+
+        var savedUser = null;
+        try { savedUser = localStorage.getItem('colloquium-user'); } catch (e) {}
+        if (savedUser && state.users[savedUser]) {
+            setSession(state.users[savedUser]);
+        } else {
+            showAuth('login');
+        }
+
+        setInterval(pollForUpdates, POLL_INTERVAL);
+    });
+}
+
+init();
+
 </html>
